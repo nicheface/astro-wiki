@@ -78,6 +78,8 @@
 | 图表 | Recharts | ^3.x |
 | 代码沙盒 | 原生 `textarea` + `iframe srcdoc`（零外部依赖） | — |
 | 标题锚点 | `rehype-slug`（为 TOC 导航生成标题 id） | — |
+| 搜索 | `pagefind`（构建时生成静态索引） | ^1.x |
+| 暗色模式 | Tailwind `@custom-variant dark` + localStorage | — |
 | 包管理 | npm（镜像源：`registry.npmmirror.com`） | — |
 | 部署 | GitHub Actions → GitHub Pages | — |
 
@@ -421,6 +423,7 @@ const { prop1, prop2 } = Astro.props;
 | 2026-06-20 | 新增笔记：Litestar 高性能 ASGI Python Web 框架 | 当前 |
 | 2026-06-20 | 新增：TagFilter 组件——首页标签筛选功能 | 当前 |
 | 2026-06-20 | 重构：三级标签层级体系 + ArticleTag 关联弹窗 + 集中数据源 | 当前 |
+| 2026-06-20 | 新增：暗色模式（DarkToggle + 全局 dark: 变体 + localStorage） | 当前 |
 | 2026-06-20 | 新增：三栏文章布局（左时间线 + 正文 + 右目录导航） | 当前 |
 | 2026-06-20 | 重构：标签系统按用户分类（编程/生活/思考 → python/前端 → astro 等）| 当前 |
 | 2026-06-20 | 经验：MDX 中 JSX 组件必须与 children 同行，不可断行 | 当前 |
