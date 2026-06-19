@@ -1,6 +1,7 @@
 ---
 // ===== Layout.astro — Apple-inspired Master Layout =====
 import "../styles/global.css";
+import SearchBox from "../components/SearchBoxWrapper.astro";
 
 export interface Props {
   title: string;
@@ -60,6 +61,7 @@ const { title = "Digital Garden", description = "" } = Astro.props;
             >
               GitHub
             </a>
+            <SearchBox />
           </div>
         </div>
       </div>
