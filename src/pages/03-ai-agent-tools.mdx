@@ -1,0 +1,174 @@
+---
+layout: ../layouts/ArticleLayout.astro
+title: "AI Agent 工具三则：Dokobot / Huashu Design / PPT Master"
+description: "三款 2026 年值得关注的 AI Agent 生态工具：让 AI 浏览真实网页、生成可交付设计稿、从文档一键出原生可编辑 PPT。"
+currentHref: "/astro-wiki/03-ai-agent-tools"
+tags: [coding, ai, agent, tool, skill, design-tool, ppt]
+---
+
+import DataChart from "../components/DataChartWrapper.astro";
+import HoverDetail from "../components/HoverDetailWrapper.astro";
+import ArticleTag from "../components/ArticleTagWrapper.astro";
+
+{/* ===== 标签栏 ===== */}
+<div class="not-prose mb-8 flex flex-wrap gap-2">
+<ArticleTag tagKey="coding" /> <ArticleTag tagKey="ai" /> <ArticleTag tagKey="agent" /> <ArticleTag tagKey="tool" /> <ArticleTag tagKey="skill" /> <ArticleTag tagKey="design-tool" /> <ArticleTag tagKey="ppt" />
+</div>
+
+{/* ===== 开篇 ===== */}
+<div class="not-prose mb-16">
+  <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
+    AI Agent 工具三则
+    <span class="block text-xl font-normal text-zinc-400 mt-2">Dokobot · Huashu Design · PPT Master</span>
+  </h1>
+  <div class="flex items-center gap-4 mt-6">
+    <time class="text-sm text-zinc-400" datetime="2026-06-20">2026 年 6 月 20 日</time>
+    <span class="text-zinc-200">·</span>
+    <span class="text-sm text-zinc-400">阅读约 5 分钟</span>
+  </div>
+</div>
+
+## 引言：Agent 先行，工具随后
+
+2026 年，<HoverDetail term="AI Agent" href="https://en.wikipedia.org/wiki/Intelligent_agent">AI Agent（智能代理）是指能够自主感知环境、做出决策并执行动作的 AI 系统。在编程领域，Claude Code、Cursor、Codex 等 Agent 已能理解项目上下文、编写代码、操作文件——但它们缺少与真实世界交互的"手"和"眼"。</HoverDetail> 已从实验走向日常开发。但 Agent 的强大受限于它能触达的世界——它需要**真实浏览器**来读取网页、需要**设计能力**来产出视觉稿、需要**文档工具**来生成演示文稿。
+
+以下三款工具正是在填补这些缺口。
+
+---
+
+## Dokobot：给 AI 装上真实的"眼睛"
+
+<HoverDetail term="Dokobot" href="https://dokobot.ai">Dokobot 是一款专为 AI Agent 设计的免费网页浏览工具。它以 Chrome 扩展形式运行，让 AI 通过用户的真实浏览器读取任意网页内容——而非依赖云浏览器或爬虫。完全本地运行，无需注册、无 API Key、无限免费。</HoverDetail> 的核心思路非常朴素：**既然人类用 Chrome 看网页，AI 也应该用同一个 Chrome**。
+
+### 为什么不用传统爬虫？
+
+| 传统方案 | Dokobot |
+|----------|---------|
+| 爬虫拿不到 JS 渲染后的 SPA | ✅ 真实浏览器渲染后提取 |
+| 无法处理登录态页面 | ✅ 用户的 Chrome 天然携带 Cookie |
+| 被 Cloudflare/反爬拦截 | ✅ 人类浏览器正常访问，像素级分析 |
+| 原始 HTML 浪费大量 Token | ✅ 输出结构化 Markdown，最高省 99% Token |
+
+### 关键数据
+
+- **Chrome Web Store 评分**：4.6 / 5
+- **用户量**：5000+
+- **支持 Agent**：Claude Code、Cursor、Codex、OpenClaw、Windsurf 等
+- **安装**：`npm i -g @dokobot/cli` + Chrome 扩展
+
+> Dokobot 支持 <HoverDetail term="MCP" href="https://modelcontextprotocol.io">MCP（Model Context Protocol）是 Anthropic 提出的开放协议，让 AI Agent 能够安全、标准化地调用外部工具和数据源。Dokobot 和 PPT Master 都提供了 MCP 集成。</HoverDetail> 集成和 Skill 安装，可以直接接入 Claude Code 等 Agent 的工具链。2026 年 6 月最新版本新增了智能搜索引擎路由（中英文自动分流到 Google/Bing/百度）和并行搜索能力。
+
+---
+
+## Huashu Design：终端里的设计工作室
+
+<HoverDetail term="Huashu Design" href="https://github.com/alchaincyf/huashu-design">一款开源的 Claude Code 原生 HTML 设计 Skill，由独立开发者花叔（@AlchainHust）创建。通过在终端中输入自然语言即可生成高保真交互原型、可编辑 PPTX 幻灯片、Motion 动画和印刷级信息图。GitHub 星标超 1.8 万。</HoverDetail> 的口号是：
+
+> **「打字。回车。一份能交付的设计。」**
+
+### GitHub 增长曲线
+
+<DataChart
+  data={[
+    { date: "4/19", stars: 0 },
+    { date: "4/25", stars: 6000 },
+    { date: "5/10", stars: 10000 },
+    { date: "5/26", stars: 14800 },
+    { date: "6/01", stars: 15700 },
+    { date: "6/08", stars: 17400 },
+    { date: "6/15", stars: 18600 },
+  ]}
+  type="line"
+  dataKey="stars"
+  xKey="date"
+  color="#3b82f6"
+  title="Huashu Design GitHub Star 增长（2026 年 4–6 月）"
+  height={260}
+/>
+
+两个月内从 0 到接近 2 万 star——这个速度在开源工具类项目中极为罕见。
+
+### 能力矩阵
+
+| 能力 | 交付物 | 耗时 |
+|------|--------|------|
+| 交互原型（App/Web） | 单文件 HTML + 可点击 | 10–15 min |
+| 演讲幻灯片 | HTML 演示 + 可编辑 PPTX | 15–25 min |
+| Motion 动画 | MP4（25/60fps）+ GIF | 8–12 min |
+| 信息图 | 印刷级 PDF/PNG/SVG | 10 min |
+| 设计评审 | 5 维雷达图 + 修改清单 | 3 min |
+
+### 技术主张
+
+1. **20 条设计哲学**嵌入 Skill 指令——留白呼吸、信息层级、色彩节奏等
+2. **5 维自动评审**：可用性 → 信息传达 → 视觉一致性 → 情感共鸣 → 创新性，不及格自动重做
+3. **反 AI Slop 规则**：禁用紫渐变、禁止 emoji 图标、禁止 AI 惯用套路
+4. **品牌资产自动提取**：从官网抓色值、生成 CSS 变量，绝不靠模型猜测
+
+```bash
+# 安装（跨 Agent 通用）
+npx skills add alchaincyf/huashu-design
+```
+
+MIT 协议，兼容 Claude Code / Cursor / Codex / OpenClaw 等所有支持 Skill 的 Agent。
+
+---
+
+## PPT Master：从文档到可编辑 PPTX
+
+<HoverDetail term="PPT Master" href="https://github.com/hugohe3/ppt-master">一个开源 AI 工作流，能将 PDF、Word、Markdown、网页等任意文档转换为真正原生可编辑的 PowerPoint 文件。生成的每个元素都是 DrawingML 原生对象，可在 PowerPoint 中直接修改。GitHub 星标超 2.8 万。</HoverDetail> 解决了一个关键痛点：市面上大多数 AI 生成的 PPT 是「一页一张大图」——无法编辑、无法套模板、无法调整布局。
+
+### 核心原理
+
+```
+源文档 → AI 分析 → 生成 SVG → svg2ooxml 转换 → 原生 PPTX
+```
+
+SVG 和 <HoverDetail term="DrawingML" href="https://learn.microsoft.com/en-us/office/open-xml/drawingml-overview">DrawingML 是 Office Open XML 标准中的矢量图形语言，PowerPoint 原生支持的 2D 绘图格式。PPT Master 利用 SVG 和 DrawingML 同为 2D 矢量格式的特性，实现了从 SVG 到 PPTX 的"方言翻译"而非格式跳跃。</HoverDetail> 同为 2D 矢量格式，转换是"方言翻译"而非格式跳跃。
+
+### 与竞品对比
+
+| 特性 | PPT Master | Gamma / WPS AI |
+|------|-----------|----------------|
+| 输出可编辑 | ✅ 原生 DrawingML | ❌ 扁平图片或模板填字 |
+| 数据隐私 | ✅ 完全本地 | ❌ 上传至云端 |
+| 费用 | MIT 免费 | $10–30/月订阅 |
+| 平台锁定 | ❌ 无，兼容多模型 | ❌ 厂商绑定 |
+| 动画支持 | ✅ 原生转场 + 入场动画 | ❌ 无或受限 |
+
+### 安装
+
+```bash
+git clone https://github.com/hugohe3/ppt-master.git
+cd ppt-master
+pip install -r requirements.txt
+```
+
+将源文件放入 `projects/`，对 AI Agent 说：「请从 `projects/my-report.pdf` 创建一份 PPT」。AI 处理内容分析、视觉设计、SVG 生成和 PPTX 导出，输出落于 `exports/`。
+
+> ⚠️ 推荐模型组合：**Claude Opus + gpt-image-2**；便宜模型需要更多手动修复。10 页幻灯片约需 10–20 分钟生成。
+
+---
+
+## 三款工具定位对比
+
+| 维度 | Dokobot | Huashu Design | PPT Master |
+|------|---------|---------------|------------|
+| **核心功能** | AI 浏览真实网页 | 自然语言生成设计稿 | 文档→可编辑 PPTX |
+| **输出格式** | 结构化 Markdown | HTML / PPTX / MP4 / GIF | 原生 PPTX |
+| **安装方式** | CLI + Chrome 扩展 | `npx skills add` | Git clone + pip |
+| **免费程度** | 完全免费，无需注册 | MIT 开源 | MIT 开源 |
+| **GitHub Stars** | — | ~18,600 | ~28,000+ |
+| **代表用户群** | 数据采集、研究 | 设计师、创业者 | 职场、教育 |
+| **隐私** | 本地运行，端到端加密 | 本地运行 | 本地运行 |
+
+---
+
+<div class="not-prose mt-16 p-6 rounded-2xl bg-zinc-50 border border-zinc-100">
+  <p class="text-sm text-zinc-500 leading-relaxed">
+    <strong class="text-zinc-700">🔗 延伸链接</strong><br/>
+    <a href="https://dokobot.ai" class="text-blue-600 hover:text-blue-500">Dokobot 官网</a> &middot;
+    <a href="https://github.com/alchaincyf/huashu-design" class="text-blue-600 hover:text-blue-500">Huashu Design GitHub</a> &middot;
+    <a href="https://github.com/hugohe3/ppt-master" class="text-blue-600 hover:text-blue-500">PPT Master GitHub</a>
+  </p>
+</div>

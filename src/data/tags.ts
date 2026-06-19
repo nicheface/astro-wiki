@@ -33,6 +33,7 @@ export const ALL_TAGS: TagDef[] = [
   { key: "python", label: "Python", level: 2, parent: "coding" },
   { key: "frontend", label: "前端", level: 2, parent: "coding" },
   { key: "webdev", label: "Web", level: 2, parent: "coding" },
+  { key: "ai", label: "AI", level: 2, parent: "coding" },
 
   // ---- Level 2 (under 生活) ----
   { key: "movie", label: "电影", level: 2, parent: "life" },
@@ -63,6 +64,13 @@ export const ALL_TAGS: TagDef[] = [
 
   // ---- Level 3 (under 方法论) ----
   { key: "component", label: "组件化", level: 3, parent: "methodology" },
+
+  // ---- Level 3 (under AI) ----
+  { key: "agent", label: "Agent", level: 3, parent: "ai" },
+  { key: "skill", label: "Skill", level: 3, parent: "ai" },
+  { key: "tool", label: "工具", level: 3, parent: "ai" },
+  { key: "ppt", label: "PPT", level: 3, parent: "ai" },
+  { key: "design-tool", label: "设计工具", level: 3, parent: "ai" },
 ];
 
 // ===== Lookup =====

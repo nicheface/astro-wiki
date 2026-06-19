@@ -12,6 +12,14 @@ export interface ArticleMeta {
 
 export const articles: ArticleMeta[] = [
   {
+    href: "/astro-wiki/03-ai-agent-tools",
+    title: "AI Agent 工具三则：Dokobot / Huashu Design / PPT Master",
+    description:
+      "三款 2026 年值得关注的 AI Agent 生态工具：让 AI 浏览真实网页、生成可交付设计稿、从文档一键出原生可编辑 PPT。",
+    date: "2026-06-20",
+    tags: ["coding", "ai", "agent", "tool", "skill", "design-tool", "ppt"],
+  },
+  {
     href: "/astro-wiki/02-litestar-python-web-framework",
     title: "Litestar：高性能 ASGI Python Web 框架",
     description:
