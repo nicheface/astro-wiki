@@ -1,23 +1,14 @@
 /**
- * TagFilter.tsx — Hierarchical tag filter with collapsible sections
+ * TagFilter.tsx — Apple-inspired hierarchical tag filter
  *
- * Features:
- * - Three-level tag hierarchy (collapsible)
- * - Multi-select with AND logic
- * - Compact design for many tags
- * - Separate filter area (not inside article list)
+ * Every tag (L1/L2/L3) is clickable and filters articles.
+ * Hierarchy is visual organization only — filtering is flat AND-logic.
  */
 "use client";
 
 import { useState, useMemo } from "react";
 import type { ArticleMeta } from "../data/articles";
-import {
-  LEVEL_1_TAGS,
-  LEVEL_2_TAGS,
-  LEVEL_3_TAGS,
-  getTagLabel,
-  getChildren,
-} from "../data/tags";
+import { ALL_TAGS, getLabel, getTopLevel, getL2WithChildren, getChildren } from "../data/tags";
 import type { TagDef } from "../data/tags";
 
 // ----- Types -----
@@ -25,142 +16,107 @@ interface TagFilterProps {
   articles: ArticleMeta[];
 }
 
-// ----- Sub-component: Collapsible Section -----
-function TagSection({
+// ===== Sub: Tag Pill =====
+function Pill({
   tag,
-  children,
-  defaultOpen = false,
+  active,
+  count,
+  onClick,
 }: {
   tag: TagDef;
-  children: React.ReactNode;
-  defaultOpen?: boolean;
-}) {
-  const [open, setOpen] = useState(defaultOpen);
-  return (
-    <div>
-      <button
-        onClick={() => setOpen(!open)}
-        className="flex items-center gap-1.5 w-full text-left py-1.5 group"
-      >
-        <svg
-          className={`w-3 h-3 text-zinc-400 transition-transform duration-200 ${open ? "rotate-90" : ""}`}
-          viewBox="0 0 12 12"
-          fill="currentColor"
-        >
-          <path d="M4.5 2.5L8 6l-3.5 3.5" stroke="currentColor" strokeWidth="1.5" fill="none" />
-        </svg>
-        <span className="text-xs font-medium text-zinc-500 group-hover:text-zinc-700 transition-colors">
-          {tag.label}
-        </span>
-        <span className="text-[10px] text-zinc-300 ml-auto">
-          {tag.level === 1 ? "领域" : tag.level === 2 ? "主题" : ""}
-        </span>
-      </button>
-      {open && <div className="ml-4 mt-1 space-y-1">{children}</div>}
-    </div>
-  );
-}
-
-// ----- Sub-component: Tag Pill -----
-function TagPill({
-  tagKey,
-  active,
-  onClick,
-  count,
-}: {
-  tagKey: string;
   active: boolean;
-  onClick: () => void;
   count: number;
+  onClick: () => void;
 }) {
+  const sizeClass =
+    tag.level === 1
+      ? "text-sm px-3 py-1.5"
+      : tag.level === 2
+        ? "text-xs px-2.5 py-1"
+        : "text-[11px] px-2 py-0.5";
+
   return (
     <button
       onClick={onClick}
       className={`
-        inline-flex items-center gap-1 px-2 py-1 rounded-md text-[11px] font-medium
+        inline-flex items-center gap-1.5 rounded-lg font-medium
         transition-all duration-200 ease-out
+        ${sizeClass}
         ${active
-          ? "bg-blue-600 text-white shadow-[0_2px_6px_rgb(59,130,246,0.2)]"
+          ? "bg-blue-600 text-white shadow-[0_2px_8px_rgb(59,130,246,0.25)]"
           : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
         }
       `}
     >
-      {getTagLabel(tagKey)}
-      <span className={`text-[10px] ${active ? "text-blue-200" : "text-zinc-400"}`}>
-        {count}
-      </span>
+      {tag.label}
+      {count > 0 && (
+        <span className={`text-[10px] opacity-70`}>{count}</span>
+      )}
     </button>
   );
 }
 
-// ----- Main Component -----
+// ===== Main =====
 export default function TagFilter({ articles }: TagFilterProps) {
-  const [selectedTags, setSelectedTags] = useState<Set<string>>(new Set());
+  const [selected, setSelected] = useState<Set<string>>(new Set());
 
-  // Count articles per tag
+  // Count how many articles carry each tag
   const tagCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    articles.forEach((a) => {
-      a.tags.forEach((t) => counts.set(t, (counts.get(t) ?? 0) + 1));
-    });
-    return counts;
+    const m = new Map<string, number>();
+    articles.forEach((a) => a.tags.forEach((t) => m.set(t, (m.get(t) ?? 0) + 1)));
+    return m;
   }, [articles]);
 
-  // Filter articles: show all if none selected, AND logic otherwise
+  // AND filter: article must contain ALL selected tags
   const filtered = useMemo(() => {
-    if (selectedTags.size === 0) return articles;
+    if (selected.size === 0) return articles;
     return articles.filter((a) => {
-      const set = new Set(a.tags);
-      return Array.from(selectedTags).every((t) => set.has(t));
+      const s = new Set(a.tags);
+      return Array.from(selected).every((t) => s.has(t));
     });
-  }, [articles, selectedTags]);
+  }, [articles, selected]);
 
-  const toggleTag = (key: string) => {
-    setSelectedTags((prev) => {
+  const toggle = (key: string) => {
+    setSelected((prev) => {
       const next = new Set(prev);
       next.has(key) ? next.delete(key) : next.add(key);
       return next;
     });
   };
 
-  const clearAll = () => setSelectedTags(new Set());
+  const clearAll = () => setSelected(new Set());
 
-  // Find which Level 2 sections to expand (if any of their L3 children are selected)
-  const l2HasActiveChild = (l2Key: string) => {
-    return getChildren(l2Key).some((t) => selectedTags.has(t.key));
-  };
+  const topLevel = getTopLevel();
 
   return (
     <div>
-      {/* ===== Filter Panel ===== */}
-      <div className="mb-10 p-6 rounded-2xl bg-zinc-50/50 border border-zinc-100/60">
-        <div className="flex items-center justify-between mb-4">
+      {/* ========== Filter Panel ========== */}
+      <div className="mb-12 rounded-2xl border border-zinc-100/60 bg-white p-6 sm:p-8 shadow-[0_4px_20px_rgb(0,0,0,0.02)]">
+        {/* Header row */}
+        <div className="flex items-center justify-between mb-6">
           <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
-            按领域筛选
+            标签筛选
           </h3>
-          {selectedTags.size > 0 && (
+          {selected.size > 0 && (
             <button
               onClick={clearAll}
-              className="text-[11px] text-zinc-400 hover:text-zinc-600 transition-colors"
+              className="text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
             >
-              清除全部
+              清除
             </button>
           )}
         </div>
 
-        {/* Active filter chips */}
-        {selectedTags.size > 0 && (
-          <div className="flex flex-wrap gap-1.5 mb-5 pb-5 border-b border-zinc-200/60">
-            {Array.from(selectedTags).map((key) => (
+        {/* Active chips */}
+        {selected.size > 0 && (
+          <div className="flex flex-wrap gap-1.5 mb-6 pb-6 border-b border-zinc-100">
+            {Array.from(selected).map((k) => (
               <span
-                key={key}
+                key={k}
                 className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 text-xs font-medium"
               >
-                {getTagLabel(key)}
-                <button
-                  onClick={() => toggleTag(key)}
-                  className="ml-0.5 hover:text-blue-900"
-                >
+                {getLabel(k)}
+                <button onClick={() => toggle(k)} className="hover:text-blue-900 ml-0.5">
                   ×
                 </button>
               </span>
@@ -168,47 +124,68 @@ export default function TagFilter({ articles }: TagFilterProps) {
           </div>
         )}
 
-        {/* Hierarchical tag tree */}
-        <div className="space-y-3">
-          {LEVEL_1_TAGS.map((l1) => {
-            const l2Children = LEVEL_2_TAGS.filter((t) => t.parent === l1.key);
-            if (l2Children.length === 0) return null;
+        {/* Hierarchy tree */}
+        <div className="space-y-6">
+          {topLevel.map((l1) => {
+            const l2tags = getL2WithChildren(l1.key);
+            if (l2tags.length === 0) return null;
+
             return (
-              <TagSection key={l1.key} tag={l1} defaultOpen>
-                {l2Children.map((l2) => {
-                  const l3Children = LEVEL_3_TAGS.filter(
-                    (t) => t.parent === l2.key && tagCounts.has(t.key)
-                  );
-                  if (l3Children.length === 0) return null;
-                  return (
-                    <TagSection
-                      key={l2.key}
-                      tag={l2}
-                      defaultOpen={l2HasActiveChild(l2.key)}
-                    >
-                      <div className="flex flex-wrap gap-1.5">
-                        {l3Children.map((l3) => (
-                          <TagPill
-                            key={l3.key}
-                            tagKey={l3.key}
-                            active={selectedTags.has(l3.key)}
-                            onClick={() => toggleTag(l3.key)}
-                            count={tagCounts.get(l3.key) ?? 0}
+              <div key={l1.key}>
+                {/* Level 1 row */}
+                <div className="flex items-center gap-3 mb-2">
+                  <Pill
+                    tag={l1}
+                    active={selected.has(l1.key)}
+                    count={tagCounts.get(l1.key) ?? 0}
+                    onClick={() => toggle(l1.key)}
+                  />
+                  <div className="h-px flex-1 bg-zinc-100" />
+                </div>
+
+                {/* Level 2 + Level 3 */}
+                <div className="ml-1 pl-4 border-l border-zinc-100 space-y-3">
+                  {l2tags.map((l2) => {
+                    const l3tags = getChildren(l2.key);
+                    return (
+                      <div key={l2.key}>
+                        {/* Level 2 row */}
+                        <div className="flex items-center gap-2 mb-1.5">
+                          <Pill
+                            tag={l2}
+                            active={selected.has(l2.key)}
+                            count={tagCounts.get(l2.key) ?? 0}
+                            onClick={() => toggle(l2.key)}
                           />
-                        ))}
+                        </div>
+
+                        {/* Level 3 pills */}
+                        {l3tags.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 ml-0">
+                            {l3tags.map((l3) => (
+                              <Pill
+                                key={l3.key}
+                                tag={l3}
+                                active={selected.has(l3.key)}
+                                count={tagCounts.get(l3.key) ?? 0}
+                                onClick={() => toggle(l3.key)}
+                              />
+                            ))}
+                          </div>
+                        )}
                       </div>
-                    </TagSection>
-                  );
-                })}
-              </TagSection>
+                    );
+                  })}
+                </div>
+              </div>
             );
           })}
         </div>
       </div>
 
-      {/* ===== Article List ===== */}
+      {/* ========== Article List ========== */}
       <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
-        {selectedTags.size > 0 ? `筛选结果（${filtered.length}）` : `最新笔记（${filtered.length}）`}
+        {selected.size > 0 ? `筛选结果（${filtered.length}）` : `最新笔记（${filtered.length}）`}
       </h2>
 
       {filtered.length === 0 ? (
@@ -217,35 +194,35 @@ export default function TagFilter({ articles }: TagFilterProps) {
         </div>
       ) : (
         <div className="space-y-6">
-          {filtered.map((article) => (
+          {filtered.map((a) => (
             <a
-              key={article.href}
-              href={article.href}
+              key={a.href}
+              href={a.href}
               className="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
               <div className="flex items-start justify-between gap-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-1.5 mb-1 flex-wrap">
-                    {article.tags.slice(0, 4).map((t) => (
+                <div className="space-y-2 min-w-0">
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    {a.tags.map((t) => (
                       <span
                         key={t}
                         className={`text-[11px] font-medium px-2 py-0.5 rounded ${
-                          selectedTags.has(t)
+                          selected.has(t)
                             ? "bg-blue-100 text-blue-700"
                             : "bg-zinc-100 text-zinc-500"
                         }`}
                       >
-                        {getTagLabel(t)}
+                        {getLabel(t)}
                       </span>
                     ))}
                   </div>
                   <h3 className="text-xl font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">
-                    {article.title}
+                    {a.title}
                   </h3>
-                  <p className="text-zinc-500 leading-relaxed">{article.description}</p>
+                  <p className="text-zinc-500 leading-relaxed">{a.description}</p>
                 </div>
-                <time className="shrink-0 text-sm text-zinc-400 mt-1" dateTime={article.date}>
-                  {article.date}
+                <time className="shrink-0 text-sm text-zinc-400 mt-1" dateTime={a.date}>
+                  {a.date}
                 </time>
               </div>
             </a>

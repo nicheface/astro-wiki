@@ -420,6 +420,7 @@ const { prop1, prop2 } = Astro.props;
 | 2026-06-20 | 新增笔记：Litestar 高性能 ASGI Python Web 框架 | 当前 |
 | 2026-06-20 | 新增：TagFilter 组件——首页标签筛选功能 | 当前 |
 | 2026-06-20 | 重构：三级标签层级体系 + ArticleTag 关联弹窗 + 集中数据源 | 当前 |
+| 2026-06-20 | 重构：标签系统按用户分类（编程/生活/思考 → python/前端 → astro 等）| 当前 |
 | 2026-06-20 | 经验：MDX 中 JSX 组件必须与 children 同行，不可断行 | 当前 |
 
 ---

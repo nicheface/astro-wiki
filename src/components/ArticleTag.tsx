@@ -7,7 +7,7 @@
 "use client";
 
 import { useState, useRef, useEffect, useCallback } from "react";
-import { getTagLabel } from "../data/tags";
+import { getLabel } from "../data/tags";
 import { articles } from "../data/articles";
 
 // ----- Types -----
@@ -30,7 +30,7 @@ function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () =
 export default function ArticleTag({ tagKey }: ArticleTagProps) {
   const [open, setOpen] = useState(false);
   const popoverRef = useRef<HTMLDivElement>(null);
-  const label = getTagLabel(tagKey);
+  const label = getLabel(tagKey);
 
   const close = useCallback(() => setOpen(false), []);
   useClickOutside(popoverRef, close);
