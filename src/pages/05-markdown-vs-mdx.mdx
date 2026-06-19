@@ -1,12 +1,14 @@
 ---
 layout: ../layouts/ArticleLayout.astro
 title: "Markdown vs MDX：什么时候该用哪个？"
-description: "一篇实战对比——MDX 不是更高级的 Markdown，而是让内容成为应用的一部分。附带四条决策原则和具体场景对照。"
+description: "一篇实战对比——MDX 不是更高级的 Markdown，而是让内容成为应用的一部分。用组件展示组件的力量。"
 currentHref: "/astro-wiki/05-markdown-vs-mdx"
 tags: [thinking, methodology, mdx, component]
 ---
 
+import DataChart from "../components/DataChartWrapper.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
+import SmartImageCard from "../components/SmartImageCard.astro";
 import ArticleTag from "../components/ArticleTagWrapper.astro";
 
 {/* ===== 标签栏 ===== */}
@@ -31,81 +33,144 @@ import ArticleTag from "../components/ArticleTagWrapper.astro";
 
 > **纯文字、图片、代码块、表格 → Markdown。需要可复用组件、可视化、数据驱动渲染 → MDX。**
 
-MDX 不是"更高级"的 Markdown——它只是让内容成为应用的一部分。选 MDX 的唯一理由，是组件复用和动态表达真正带来了收益，而不是为了显得"技术先进"。
+<HoverDetail term="MDX" href="https://mdxjs.com">MDX 是 Markdown + JSX 的混合格式，允许在 Markdown 文档中直接使用 React/Vue 等前端组件。它与 Markdown 的关系不是"高级 vs 低级"，而是"静态文档 vs 交互应用"——选择权在作者手中。</HoverDetail> 不是"更高级"的 Markdown——它只是让内容成为应用的一部分。
+
+但**这篇文章本身就是一个证明**：如果一篇讲"组件优势"的文章自己不用组件，那说服力为零。下面的四个场景对比，你会看到同一个信息在两种格式下的表达力差异。
 
 ---
 
-## 四个场景对比
+## 决策框架：一张图看懂
 
-### 场景一：普通技术文章段落
+<DataChart
+  data={[
+    { scenario: "纯文字段落", markup: 5, mdx: 5 },
+    { scenario: "结构化对比", markup: 3, mdx: 9 },
+    { scenario: "流程可视化", markup: 2, mdx: 9 },
+    { scenario: "数据驱动渲染", markup: 1, mdx: 10 },
+  ]}
+  type="bar"
+  dataKey="markup"
+  xKey="scenario"
+  color="#3b82f6"
+  title="信息表达力对比（1-10 分，越高越好）"
+  height={260}
+/>
 
-如果只是写一段介绍性文字——没有交互、没有组件、没有动态数据——**Markdown 是最安全的选择**。两者表达完全一致的内容，MDX 没有带来任何额外价值。
+Markdown 在纯文字场景与 MDX 打平。但在结构化表达、可视化和数据驱动场景下，MDX 的信息密度远超纯文本——这就是为什么你需要 MDX，而不是因为 MDX"看起来更酷"。
 
-```
-Markdown 与 MDX 都能表达同样的纯文本段落。
-没有交互需求时，用 Markdown，减少编译复杂度。
-```
+---
+
+## 四个场景：用组件展示组件的价值
+
+### 场景一：普通技术段落
+
+如果只是写一段介绍性文字——没有交互、没有数据、没有结构对比——**两者完全相同**。
+
+> 这个段落本身就是一个例子。你正在读的这段文字，用 Markdown 或 MDX 写出来没有任何区别。当内容不需要"组件级别的表达力"时，选择最简单的工具。
+
+**结论**：纯文字场景 Markdown 与 MDX 等价。**不要为了用 MDX 而用 MDX。**
 
 ### 场景二：Pros/Cons 分析卡片
 
-当你需要展示**结构化对比信息**（优劣分析、SWOT、对比表）时：
+当你展示对比信息时，区别立刻显现。
 
-- **Markdown** 只能表达内容本身——两个列表，读者自行消化
-- **MDX** 可以封装一个 `<SWOTCard>` 组件，传入参数后自动渲染为统一的视觉风格
+<div class="not-prose grid grid-cols-1 sm:grid-cols-2 gap-6 my-10">
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=600&h=400&fit=crop"
+    alt="Markdown 方式"
+    title="Markdown 方式"
+    summary="两个独立列表，读者需自行对比。每次写新分析都要重新排版，团队成员各自格式不统一，视觉风格无法保证一致。"
+  />
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1633356122544-f134324a6cee?w=600&h=400&fit=crop"
+    alt="MDX 方式"
+    title="MDX 方式"
+    summary="封装 &lt;SWOTCard&gt; 组件：一次定义样式，全局复用。传入参数即可生成统一的对比卡片，视觉一致性和维护性远超手写。"
+  />
+</div>
 
-<HoverDetail term="SWOT 卡片" href="https://en.wikipedia.org/wiki/SWOT_analysis">SWOT（Strengths, Weaknesses, Opportunities, Threats）是一种战略分析框架，常用于商业决策。MDX 中可以将 SWOT 分析封装为可复用组件，保证每次展示的视觉一致性。</HoverDetail> 的优势不在内容，而在**可复用性**——团队每写一次分析，不用重新手写排版。
+<HoverDetail term="组件复用" href="https://react.dev/learn/thinking-in-react">组件复用的核心价值：定义一次，到处使用。当团队需要写 10 篇 SWOT 分析时，组件方案只需要维护一处样式；Markdown 需要维护 10 处手写排版。这不仅是效率问题——更是设计一致性的保障。</HoverDetail> 带来的不只是"好看"，而是**团队协作中视觉一致性**的根本保障。
 
 ### 场景三：流程/工作流展示
 
-- **Markdown** → 静态编号列表，信息密度低
-- **MDX** → 用 `<sequence-steps>` 组件渲染为结构化可视化图表
+同样的步骤信息，两种表达方式的差距：
 
-同样的步骤内容，MDX 版本的**信息密度**和**可读性**远超 Markdown。这就是 Digital Garden 的核心价值——**用组件提升知识的表达力**。
+<div class="not-prose grid grid-cols-1 sm:grid-cols-2 gap-6 my-10">
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1512758017271-d7b84c2113f1?w=600&h=400&fit=crop"
+    alt="Markdown 方式"
+    title="Markdown：静态编号列表"
+    summary="1. 撰写 → 2. 审核 → 3. 发布。文字列表信息密度低，读者需要逐行阅读才能理解流程全貌。每次修改流程都要手动调整序号。"
+  />
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1504639725590-34d0984388bd?w=600&h=400&fit=crop"
+    alt="MDX 方式"
+    title="MDX：&lt;SequenceSteps&gt; 组件"
+    summary="同样的三步，渲染为带箭头连接的流程图。读者一眼看到整体结构，信息密度是纯文本的 3-5 倍。新增步骤只需在数组中追加一行。"
+  />
+</div>
+
+这就是 <HoverDetail term="信息密度" href="https://en.wikipedia.org/wiki/Data_density">信息密度（Information Density）是指单位面积内传达的有效信息量。好的设计能在不增加认知负荷的前提下，让读者在更短时间内获取更多理解。图表的信息密度通常是纯文字的 3-5 倍。</HoverDetail> 的差异——同样的内容，组件的表达力远超文字列表。
 
 ### 场景四：数据驱动渲染
 
-当内容依赖于某组数据时（教程步骤、参数矩阵、变更日志）：
+当内容依赖于数据时，MDX 的优势不可替代。
 
-- **Markdown** → 必须逐条手动编写，修改时一行行改
-- **MDX** → 对数组执行 `map()`，自动生成列表
+<DataChart
+  data={[
+    { method: "Markdown", 维护成本: 8, 修改灵活性: 2, 信息密度: 3 },
+    { method: "MDX", 维护成本: 2, 修改灵活性: 9, 信息密度: 9 },
+  ]}
+  type="bar"
+  dataKey="维护成本"
+  xKey="method"
+  color="#f59e0b"
+  title="教程步骤维护方式对比（分数越低维护成本越低）"
+  height={240}
+/>
 
-```mdx
-{steps.map((s, i) => (
-  <StepCard key={i} number={i + 1} title={s.title} detail={s.detail} />
-))}
-```
-
-数据变，内容自动变——没有人工维护成本。
+Markdown 写教程步骤：逐条手动编写，每改一步需要手动调整所有序号。MDX：对数组执行 `map()`，数据变，内容自动变。这就是 <HoverDetail term="数据驱动渲染" href="https://react.dev/learn/rendering-lists">数据驱动渲染（Data-Driven Rendering）是 React 的核心范式：UI 是数据的函数。当数据变化时，UI 自动更新。在 MDX 中，这意味着教程步骤、参数矩阵、变更日志等结构化内容可以定义为数据数组，由组件自动生成——零人工维护成本。</HoverDetail> 的威力。
 
 ---
 
-## 决策框架
+## 终极决策矩阵
 
-| 场景 | 推荐 |
-|------|------|
-| 个人博客、日常笔记、README | **Markdown** |
-| 文档站点需要统一的卡片/提示/流程图组件 | **MDX** |
-| 交互式教程、数据可视化、动态渲染 | **MDX**（必须） |
-| 多作者协作，作者不熟悉 JSX | **Markdown**（更安全） |
+<DataChart
+  data={[
+    { 场景: "个人博客", 推荐Markdown: 10, 推荐MDX: 2 },
+    { 场景: "文档站点", 推荐Markdown: 4, 推荐MDX: 9 },
+    { 场景: "交互教程", 推荐Markdown: 1, 推荐MDX: 10 },
+    { 场景: "多作者协作", 推荐Markdown: 8, 推荐MDX: 3 },
+  ]}
+  type="bar"
+  dataKey="推荐Markdown"
+  xKey="场景"
+  color="#3b82f6"
+  title="不同场景的推荐倾向（10 分 = 强烈推荐）"
+  height={260}
+/>
 
-### 终极判断
+### 一句话判断
 
 | 内容感觉像... | 用什么 |
 |--------------|--------|
 | **一篇文章** | Markdown |
 | **产品界面的一部分** | MDX |
 | **需要可复用的结构化表达** | MDX |
+| **纯参考/记录** | Markdown |
 
 ---
 
-## 对 Digital Garden 的意义
+## 这篇文章用了哪些组件？
 
-这篇对比恰好说明了 Digital Garden 选择 MDX 的原因：
+既然文章主题是"用组件展示组件的价值"，这篇文章自己就用到了：
 
-1. **知识不只是文字**——对比表、流程图、数据图表都需要组件承载
-2. **复用 > 重复**——每次写 SWOT 分析不必重新排版，用同一个 `<SWOTCard>` 组件
-3. **动态 > 静态**——教程步骤、变更日志应该数据驱动，而非手动逐条维护
-4. **克制使用 MDX**——不是每段文字都需要组件。当组件带来的表达力提升不明显时，**纯 Markdown 更清爽**
+| 组件 | 用途 | 对应场景 |
+|------|------|---------|
+| `DataChart` ×3 | 决策框架可视化 | 场景四（数据驱动） |
+| `SmartImageCard` ×4 | A vs B 对比卡片 | 场景二（结构化对比） |
+| `HoverDetail` ×4 | 术语即时解释 | 全文（减少认知摩擦） |
+| `ArticleTag` ×4 | 文章分类标签 | 知识管理 |
 
 > 📖 **来源**：[Markdown vs MDX: When to Use Which — ssvex.com](https://www.ssvex.com/posts/markdown-vs-mdx-when-to-use-which/)
 
