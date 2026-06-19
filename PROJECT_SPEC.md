@@ -318,7 +318,6 @@ npm run preview  # 预览构建产物
 ```mdx
 <LiveCodeBlock
   title="演示标题"
-  template="static"
   previewHeight={360}
   code={`<!DOCTYPE html>
 <html>

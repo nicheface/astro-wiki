@@ -1,24 +1,17 @@
 /**
- * LiveCodeBlock.jsx — In-Browser Code Sandbox
+ * LiveCodeBlock.tsx — In-Browser Code Sandbox
  *
  * Powered by Sandpack. Embed an editable, runnable code snippet
  * directly inside your MDX notes. Dark minimal theme, Apple-grade feel.
  */
 "use client";
 
-import {
-  SandpackProvider,
-  SandpackLayout,
-  SandpackCodeEditor,
-  SandpackPreview,
-} from "@codesandbox/sandpack-react";
+import { Sandpack } from "@codesandbox/sandpack-react";
 
 // ----- Types -----
 interface LiveCodeBlockProps {
   /** The code content (HTML + optional inline CSS/JS) */
   code: string;
-  /** Template type: "static" (HTML/CSS/JS) or "vanilla" */
-  template?: "static" | "vanilla";
   /** Optional title displayed above the sandbox */
   title?: string;
   /** Height of the preview panel in px */
@@ -61,7 +54,6 @@ const appleDarkTheme = {
 // ----- Component -----
 export default function LiveCodeBlock({
   code,
-  template = "static",
   title,
   previewHeight = 360,
 }: LiveCodeBlockProps) {
@@ -74,43 +66,21 @@ export default function LiveCodeBlock({
       )}
 
       <div className="rounded-2xl overflow-hidden border border-zinc-200/60 shadow-[0_8px_30px_rgb(0,0,0,0.04)]">
-        <SandpackProvider
-          template={template}
+        <Sandpack
+          template="static"
           files={{
             "/index.html": code,
           }}
           theme={appleDarkTheme}
           options={{
-            autorun: true,
-            recompileMode: "immediate",
+            showLineNumbers: true,
+            showTabs: false,
+            editorHeight: 200,
+            editorWidthPercentage: 100,
           }}
-        >
-          <SandpackLayout
-            style={{
-              borderRadius: 0,
-              border: "none",
-              flexDirection: "column",
-            }}
-          >
-            {/* Editor */}
-            <SandpackCodeEditor
-              showTabs={false}
-              showLineNumbers
-              showRunButton={false}
-              style={{ height: 200 }}
-            />
-
-            {/* Preview */}
-            <SandpackPreview
-              showOpenInCodeSandbox={false}
-              showRefreshButton={false}
-              style={{ height: previewHeight }}
-            />
-          </SandpackLayout>
-        </SandpackProvider>
+        />
       </div>
 
-      {/* Subtle caption */}
       <p className="mt-3 text-xs text-zinc-400 text-center">
         可编辑代码沙盒 &mdash; 直接在浏览器中修改并运行
       </p>

@@ -153,7 +153,6 @@ import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
 
 <LiveCodeBlock
   title="演示：一个交互式例子"
-  template="static"
   previewHeight={320}
   code={`<!DOCTYPE html>
 <html>
