@@ -7,16 +7,11 @@ tags: [python, web, 框架, ASGI, 异步, 高性能, API]
 
 import DataChart from "../components/DataChartWrapper.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
+import ArticleTag from "../components/ArticleTagWrapper.astro";
 
 {/* ===== 标签栏 ===== */}
 <div class="not-prose mb-8 flex flex-wrap gap-2">
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">python</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">web</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">框架</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">ASGI</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">异步</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">高性能</span>
-  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">API</span>
+<ArticleTag tagKey="python" /> <ArticleTag tagKey="web" /> <ArticleTag tagKey="framework" /> <ArticleTag tagKey="asgi" /> <ArticleTag tagKey="async" /> <ArticleTag tagKey="performance" /> <ArticleTag tagKey="api" />
 </div>
 
 {/* ===== 开篇 ===== */}

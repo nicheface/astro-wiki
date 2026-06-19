@@ -1,0 +1,9 @@
+---
+// ===== ArticleTagWrapper.astro =====
+import ArticleTag from "./ArticleTag.tsx";
+---
+
+<ArticleTag
+  client:load
+  tagKey={Astro.props.tagKey}
+/>

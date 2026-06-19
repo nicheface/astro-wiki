@@ -1,26 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import TagFilter from "../components/TagFilterWrapper.astro";
-
-// Article registry — add new entries here
-const articles = [
-  {
-    href: "/astro-wiki/02-litestar-python-web-framework",
-    title: "Litestar：高性能 ASGI Python Web 框架",
-    description:
-      "异步优先、Rust 加速的 Python ASGI 框架——msgspec 序列化 + SQLAlchemy 深度集成，基准测试全面优于 FastAPI。",
-    date: "2026-06-20",
-    tags: ["python", "web", "框架", "ASGI", "异步", "高性能", "API"],
-  },
-  {
-    href: "/astro-wiki/01-future-of-knowledge",
-    title: "知识的未来：从超链接到超级组件",
-    description:
-      "探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。",
-    date: "2026-06-20",
-    tags: ["知识管理", "MDX", "组件化", "数字花园", "Astro", "React"],
-  },
-];
+import { articles } from "../data/articles";
 ---
 
 <Layout
@@ -28,7 +9,7 @@ const articles = [
   description="一个完全组件化、支持深度交互、拥有原生 App 级视觉体验的数字花园。"
 >
   <!-- Hero Section -->
-  <header class="not-prose mb-20">
+  <header class="not-prose mb-16">
     <div class="space-y-6">
       <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-zinc-900 leading-tight">
         数字花园
@@ -42,12 +23,8 @@ const articles = [
     </div>
   </header>
 
-  <!-- Articles with Tag Filter -->
+  <!-- Tag Filter + Article List (single interactive component) -->
   <section class="not-prose">
-    <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
-      最新笔记
-    </h2>
-
     <TagFilter articles={articles} />
   </section>
 </Layout>

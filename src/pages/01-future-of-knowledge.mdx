@@ -9,6 +9,7 @@ import DataChart from "../components/DataChartWrapper.astro";
 import SmartImageCard from "../components/SmartImageCard.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
 import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
+import ArticleTag from "../components/ArticleTagWrapper.astro";
 
 {/* ===== 开篇 ===== */}
 <div class="not-prose mb-16">
@@ -31,12 +32,7 @@ import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
     <span class="text-sm text-zinc-400">阅读约 5 分钟</span>
   </div>
   <div class="flex flex-wrap gap-2 mt-5">
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">知识管理</span>
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">MDX</span>
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">组件化</span>
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">数字花园</span>
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">Astro</span>
-    <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">React</span>
+    <ArticleTag tagKey="knowledge-mgmt" /> <ArticleTag tagKey="mdx" /> <ArticleTag tagKey="component" /> <ArticleTag tagKey="digital-garden" /> <ArticleTag tagKey="astro" /> <ArticleTag tagKey="react" />
   </div>
 </div>
 
