@@ -100,21 +100,21 @@ export default function HoverDetail({ term, children, href }: HoverDetailProps) 
             absolute left-0 bottom-full mb-3 z-50
             w-72 p-5
             rounded-2xl
-            bg-white/80 backdrop-blur-2xl
-            border border-zinc-100/60
+            bg-white/80 dark:bg-slate-900/90 backdrop-blur-2xl
+            border border-zinc-100/60 dark:border-slate-700/60
             shadow-[0_12px_40px_rgb(0,0,0,0.08)]
             transition-all duration-300 ease-out
             ${hovering || open ? "opacity-100 translate-y-0 scale-100" : "opacity-0 translate-y-1 scale-95"}
           `}
         >
           {/* Bubble arrow */}
-          <div className="absolute left-6 -bottom-2 w-4 h-4 bg-white/80 backdrop-blur-2xl border-r border-b border-zinc-100/60 rotate-45" />
+          <div className="absolute left-6 -bottom-2 w-4 h-4 bg-white/80 dark:bg-slate-900/90 backdrop-blur-2xl border-r border-b border-zinc-100/60 dark:border-slate-700/60 rotate-45" />
 
           {/* Term header */}
-          <p className="text-sm font-semibold text-zinc-900 mb-2">{term}</p>
+          <p className="text-sm font-semibold text-zinc-900 dark:text-slate-200 mb-2">{term}</p>
 
           {/* Detail content */}
-          <div className="text-sm text-zinc-600 leading-relaxed space-y-2">
+          <div className="text-sm text-zinc-600 dark:text-slate-400 leading-relaxed space-y-2">
             {children}
           </div>
 

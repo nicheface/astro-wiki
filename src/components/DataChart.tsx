@@ -52,9 +52,9 @@ function CustomTooltip({
 }) {
   if (!active || !payload?.length) return null;
   return (
-    <div className="rounded-xl bg-white/80 backdrop-blur-xl px-4 py-2.5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] border border-zinc-100">
-      <p className="text-xs text-zinc-400 mb-0.5">{label}</p>
-      <p className="text-sm font-semibold text-zinc-900">
+    <div className="rounded-xl bg-white/80 dark:bg-slate-900/90 backdrop-blur-xl px-4 py-2.5 shadow-[0_8px_30px_rgb(0,0,0,0.06)] dark:shadow-[0_8px_30px_rgb(0,0,0,0.2)] border border-zinc-100 dark:border-slate-700">
+      <p className="text-xs text-zinc-400 dark:text-slate-500 mb-0.5">{label}</p>
+      <p className="text-sm font-semibold text-zinc-900 dark:text-slate-200">
         {dataKey}: {payload[0].value.toLocaleString()}
       </p>
     </div>
@@ -74,9 +74,9 @@ export default function DataChart({
   const ChartComponent = type === "bar" ? BarChart : LineChart;
 
   return (
-    <div className="not-prose my-10 p-6 rounded-2xl bg-zinc-50/50 border border-zinc-100/60">
+    <div className="not-prose my-10 p-6 rounded-2xl bg-zinc-50/50 dark:bg-slate-900/50 border border-zinc-100/60 dark:border-slate-800/60">
       {title && (
-        <h4 className="text-sm font-medium text-zinc-500 mb-6 tracking-wide">
+        <h4 className="text-sm font-medium text-zinc-500 dark:text-slate-400 mb-6 tracking-wide">
           {title}
         </h4>
       )}

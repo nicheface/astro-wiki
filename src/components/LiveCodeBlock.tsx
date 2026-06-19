@@ -45,7 +45,7 @@ export default function LiveCodeBlock({
   return (
     <div className="not-prose my-10">
       {title && (
-        <h4 className="text-sm font-medium text-zinc-500 mb-4 tracking-wide">
+        <h4 className="text-sm font-medium text-zinc-500 dark:text-slate-400 mb-4 tracking-wide">
           {title}
         </h4>
       )}

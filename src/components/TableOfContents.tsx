@@ -74,7 +74,7 @@ export default function TableOfContents() {
   return (
     <aside className="w-48 shrink-0 hidden xl:block">
       <nav className="sticky top-20 pl-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
-        <h4 className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 mb-4">
+        <h4 className="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-slate-500 mb-4">
           目录
         </h4>
 
@@ -89,7 +89,7 @@ export default function TableOfContents() {
                   ${item.level === 3 ? "pl-6" : "pl-3"}
                   ${activeId === item.id
                     ? "border-blue-500 text-blue-600 font-medium"
-                    : "border-transparent text-zinc-400 hover:text-zinc-600 hover:border-zinc-300"
+                    : "border-transparent text-zinc-400 dark:text-slate-500 hover:text-zinc-600 dark:hover:text-slate-300 hover:border-zinc-300 dark:hover:border-slate-600"
                   }
                 `}
               >
