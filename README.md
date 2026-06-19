@@ -92,7 +92,7 @@ git push origin main
 
 ---
 
-## 🧩 四大超级组件使用指南
+## 🧩 组件使用指南
 
 ### 1. DataChart — 数据图表
 
@@ -182,6 +182,35 @@ import ArticleTag from "../components/ArticleTagWrapper.astro";
 - **一级**（编程、生活、思考）→ 领域
 - **二级**（Python、前端、Web）→ 主题
 - **三级**（Litestar、Astro、React）→ 具体技术
+
+---
+
+### 6. SwotCard — SWOT 对比卡片
+
+并排展示 Strengths 和 Weaknesses，绿/红双色水印：
+
+```mdx
+import SwotCard from "../components/SwotCard.astro";
+
+<SwotCard
+  title="使用 MDX 写技术内容"
+  strengths='[{"label":"复用组件","desc":"一次开发，多篇复用"},{"label":"表达力强","desc":"文档与交互并存"}]'
+  weaknesses='[{"label":"复杂度上升","desc":"构建链路更重"},{"label":"编辑门槛","desc":"需理解 JSX 基础"}]'
+/>
+```
+
+### 7. StepFlow — 步骤流程可视化
+
+水平编号圆 + 箭头连线展示步骤：
+
+```mdx
+import StepFlow from "../components/StepFlow.astro";
+
+<StepFlow
+  title="发布流程"
+  itemsJson='[{"step":1,"label":"写完正文"},{"step":2,"label":"本地预览"},{"step":3,"label":"构建"},{"step":4,"label":"上线"}]'
+/>
+```
 
 ---
 

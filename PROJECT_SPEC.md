@@ -366,7 +366,10 @@ npm run preview  # 预览构建产物
 | MDX 中 `<HoverDetail>` 标签内断行 | MDX 将换行视为段落边界 → 编译报错。**所有 JSX 组件标签必须与 children 在同一行** |
 | 新建组件时用通用组件凑合 | **不要用 DataChart/SmartImageCard 去模拟另一个组件的效果。** 该建新组件就建，一个组件的一次性成本换来的是全站永久的表达力增益 |
 | 参考已有设计时只看个大概 | **先仔细研究原设计的布局结构、配色、字体层级。** SwotCard 改了 3 次才到位，就是因为第一版没有认真对标原设计（并排 vs 堆叠、S/W 水印、标题层级） |
-| 组件 API 设计过度抽象 | 第一版 `itemsJson` 把 Strengths/Weaknesses 揉成一个数组，MDX 中调用冗长。**拆成 `strengths` + `weaknesses` 两个独立属性后清晰很多。** API 设计优先考虑调用方体验 |
+| 组件 API 设计过度抽象 | 第一版 SwotCard 把 Strengths/Weaknesses 揉成一个 `itemsJson` 数组，MDX 中调用冗长难读。**拆成 `strengths` + `weaknesses` 两个独立属性后清晰很多。** API 设计优先考虑调用方体验 |
+| 组件用内联 style 而非 Tailwind 类名 | `style="background: #f0fdf4"` 不受暗色变体控制 → 暗色模式下颜色不变。**始终用 `bg-green-50 dark:bg-green-950`** |
+| 卡片嵌套时圆角不一致 | 外卡和内部子卡的 `rounded-*` 值不同 → 视觉不统一。**所有卡片统一圆角弧度** |
+| 描述文字没有缩进 | 条目名称和描述同级排列 → 层次不清。**描述文字缩进 2em（`ml-4`），条目名顶格加粗** |
 | 在 MDX 中直接导入 `.tsx` React 组件 | 无 `client:load` → 交互全部失效 |
 | 使用 `@tailwindcss/vite` | 与 Astro 6 的 Vite 7 版本冲突 |
 | 使用 `gray-*` 色系 | 项目统一使用 `zinc-*` |
