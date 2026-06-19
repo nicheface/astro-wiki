@@ -58,7 +58,7 @@ export default function ArticleTag({ tagKey }: ArticleTagProps) {
         tabIndex={0}
         role="button"
         aria-expanded={open}
-        className="cursor-pointer inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500 transition-all duration-200 ease-out hover:bg-blue-50 hover:text-blue-600"
+        className="cursor-pointer inline-flex items-center px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-slate-800 text-xs font-medium text-zinc-500 dark:text-slate-400 transition-all duration-200 ease-out hover:bg-blue-50 dark:hover:bg-blue-900/30 hover:text-blue-600 dark:hover:text-blue-400"
       >
         {label}
       </span>
