@@ -81,7 +81,6 @@ export default function LiveCodeBlock({
           }}
           theme={appleDarkTheme}
           options={{
-            bundlerURL: "",
             autorun: true,
             recompileMode: "immediate",
           }}
