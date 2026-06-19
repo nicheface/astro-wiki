@@ -37,7 +37,7 @@ function SmallPill({
         transition-all duration-200 ease-out whitespace-nowrap
         ${active
           ? "bg-blue-600 text-white shadow-[0_1px_4px_rgb(59,130,246,0.2)]"
-          : "bg-zinc-100 text-zinc-500 hover:bg-zinc-200 hover:text-zinc-700"
+          : "bg-zinc-100 dark:bg-slate-800 text-zinc-500 dark:text-slate-400 hover:bg-zinc-200 dark:hover:bg-slate-700 hover:text-zinc-700 dark:hover:text-slate-300"
         }
       `}
     >
@@ -70,7 +70,7 @@ function TreeNode({
           transition-all duration-200
           ${active
             ? "bg-blue-600 text-white shadow-[0_2px_8px_rgb(59,130,246,0.2)]"
-            : "bg-zinc-100 text-zinc-600 hover:bg-zinc-200"
+            : "bg-zinc-100 dark:bg-slate-800 text-zinc-600 dark:text-slate-300 hover:bg-zinc-200 dark:hover:bg-slate-700"
           }
         `}
       >
@@ -310,7 +310,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
                       <span
                         key={t}
                         className={`text-[11px] font-medium px-2 py-0.5 rounded ${
-                          selected.has(t) ? "bg-blue-100 text-blue-700" : "bg-zinc-100 text-zinc-500"
+                          selected.has(t) ? "bg-blue-100 text-blue-700" : "bg-zinc-100 dark:bg-slate-800 text-zinc-500 dark:text-slate-400"
                         }`}
                       >
                         {getLabel(t)}
