@@ -76,7 +76,7 @@
 | 样式 | Tailwind CSS v4（通过 `@tailwindcss/postcss`） | ^4.x |
 | 内容 | MDX（`@astrojs/mdx`） | ^6.x |
 | 图表 | Recharts | ^3.x |
-| 代码沙盒 | `@codesandbox/sandpack-react` | ^2.x |
+| 代码沙盒 | 原生 `textarea` + `iframe srcdoc`（零外部依赖） | — |
 | 包管理 | npm（镜像源：`registry.npmmirror.com`） | — |
 | 部署 | GitHub Actions → GitHub Pages | — |
 
@@ -313,7 +313,7 @@ npm run preview  # 预览构建产物
 </HoverDetail>
 ```
 
-### LiveCodeBlock
+### LiveCodeBlock（纯原生，零外部依赖）
 
 ```mdx
 <LiveCodeBlock
@@ -326,6 +326,10 @@ npm run preview  # 预览构建产物
 />
 ```
 
+**实现原理**: `textarea`（代码编辑）+ `iframe srcdoc`（实时预览）。不依赖任何外部服务，完全离线可用。
+
+**设计决策**: 原计划使用 `@codesandbox/sandpack-react`，但其内部 `__csb_relay` 中继页依赖外部 CDN，在国内网络环境下加载失败导致白屏。替换为纯原生方案后，包体积减少 ~500KB，且永不依赖外部网络。
+
 ---
 
 ## 9. 已知陷阱与禁止操作
@@ -334,7 +338,7 @@ npm run preview  # 预览构建产物
 
 | 操作 | 原因 |
 |------|------|
-| 在 `.tsx` 组件中设置 `bundlerURL: ""` | Sandpack 会构造 `new URL("")` → 崩溃 |
+| 使用 `@codesandbox/sandpack-react` | 国内网络 `__csb_relay` 加载失败 → 白屏，已替换为原生方案 |
 | 在 MDX 中直接导入 `.tsx` React 组件 | 无 `client:load` → 交互全部失效 |
 | 使用 `@tailwindcss/vite` | 与 Astro 6 的 Vite 7 版本冲突 |
 | 使用 `gray-*` 色系 | 项目统一使用 `zinc-*` |
@@ -404,6 +408,7 @@ const { prop1, prop2 } = Astro.props;
 | 2026-06-20 | 修复：移除 Sandpack 的无效 bundlerURL | `b93c328` |
 | 2026-06-20 | 文档：创建项目执行规范 PROJECT_SPEC.md | 当前 |
 | 2026-06-20 | 新增 §2 MDX 写作哲学：用组件思考 | 当前 |
+| 2026-06-20 | 重构：LiveCodeBlock 从 Sandpack 替换为原生 textarea+iframe | 当前 |
 
 ---
 
