@@ -71,8 +71,8 @@ export default function ArticleTag({ tagKey }: ArticleTagProps) {
             absolute left-0 top-full mt-2 z-50
             w-64 p-4
             rounded-xl
-            bg-white/90 dark:bg-zinc-900/90 backdrop-blur-xl
-            border border-zinc-100/60 dark:border-zinc-700/60
+            bg-white/90 dark:bg-slate-900/90 backdrop-blur-xl
+            border border-zinc-100/60 dark:border-slate-700/60
             shadow-[0_12px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgb(0,0,0,0.3)]
             transition-all duration-200 ease-out
           `}

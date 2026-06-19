@@ -24,14 +24,14 @@ const { title = "Digital Garden", description = "" } = Astro.props;
   <body class="min-h-screen bg-white">
     <!-- ===== Glassmorphism Navigation ===== -->
     <nav
-      class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 supports-[backdrop-filter]:bg-white/60 dark:bg-zinc-950/70 dark:supports-[backdrop-filter]:bg-zinc-950/60 border-b border-zinc-200/40 dark:border-zinc-800/40"
+      class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 supports-[backdrop-filter]:bg-white/60 dark:bg-slate-950/70 dark:supports-[backdrop-filter]:bg-slate-950/60 border-b border-zinc-200/40 dark:border-slate-800/40"
     >
       <div class="max-w-4xl mx-auto px-6 sm:px-10">
         <div class="flex items-center justify-between h-16">
           <!-- Logo / Site Title -->
           <a
             href="/astro-wiki/"
-            class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-zinc-100 transition-all duration-300 ease-out hover:text-blue-600 dark:hover:text-blue-400"
+            class="text-lg font-semibold tracking-tight text-zinc-900 dark:text-slate-200 transition-all duration-300 ease-out hover:text-blue-600 dark:hover:text-blue-400"
           >
             <span class="inline-flex items-center gap-2">
               <!-- Subtle dot indicator -->
@@ -44,13 +44,13 @@ const { title = "Digital Garden", description = "" } = Astro.props;
           <div class="flex items-center gap-6">
             <a
               href="/astro-wiki/"
-              class="text-sm font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300 ease-out hover:text-zinc-900 dark:hover:text-zinc-200"
+              class="text-sm font-medium text-zinc-500 dark:text-slate-400 transition-all duration-300 ease-out hover:text-zinc-900 dark:hover:text-slate-200"
             >
               笔记
             </a>
             <a
               href="/astro-wiki/about"
-              class="text-sm font-medium text-zinc-500 dark:text-zinc-400 transition-all duration-300 ease-out hover:text-zinc-900 dark:hover:text-zinc-200"
+              class="text-sm font-medium text-zinc-500 dark:text-slate-400 transition-all duration-300 ease-out hover:text-zinc-900 dark:hover:text-slate-200"
             >
               关于
             </a>
@@ -58,7 +58,7 @@ const { title = "Digital Garden", description = "" } = Astro.props;
               href="https://github.com/nicheface/astro-wiki"
               target="_blank"
               rel="noopener noreferrer"
-              class="text-sm font-medium text-zinc-400 dark:text-zinc-500 transition-all duration-300 ease-out hover:text-zinc-700 dark:hover:text-zinc-300"
+              class="text-sm font-medium text-zinc-400 dark:text-slate-500 transition-all duration-300 ease-out hover:text-zinc-700 dark:hover:text-slate-300"
             >
               GitHub
             </a>
@@ -77,13 +77,13 @@ const { title = "Digital Garden", description = "" } = Astro.props;
     </main>
 
     <!-- ===== Minimal Footer ===== -->
-    <footer class="border-t border-zinc-100 dark:border-zinc-800">
+    <footer class="border-t border-zinc-100 dark:border-slate-800">
       <div class="max-w-4xl mx-auto px-6 sm:px-10 py-8">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
-          <p class="text-sm text-zinc-400 dark:text-zinc-500">
+          <p class="text-sm text-zinc-400 dark:text-slate-500">
             &copy; {new Date().getFullYear()} Digital Garden &mdash; Crafted with care.
           </p>
-          <p class="text-xs text-zinc-300 dark:text-zinc-600">
+          <p class="text-xs text-zinc-300 dark:text-slate-500">
             Powered by Astro &middot; React &middot; MDX
           </p>
         </div>

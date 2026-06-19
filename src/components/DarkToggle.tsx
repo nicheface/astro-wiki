@@ -1,5 +1,5 @@
 /**
- * DarkToggle.tsx — Light / Dark mode toggle
+ * DarkToggle.tsx — iOS-style Light / Dark mode slider
  *
  * Persists preference to localStorage, defaults to system preference.
  */
@@ -7,11 +7,9 @@
 
 import { useState, useEffect, useCallback } from "react";
 
-// ----- Component -----
 export default function DarkToggle() {
   const [dark, setDark] = useState(false);
 
-  // On mount, read saved preference or system preference
   useEffect(() => {
     const saved = localStorage.getItem("theme");
     if (saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches)) {
@@ -37,18 +35,36 @@ export default function DarkToggle() {
   return (
     <button
       onClick={toggle}
-      className="inline-flex items-center justify-center w-8 h-8 rounded-lg text-zinc-400 hover:text-zinc-600 dark:hover:text-zinc-300 transition-colors duration-300"
+      className="relative inline-flex items-center shrink-0 cursor-pointer"
       aria-label={dark ? "切换到浅色模式" : "切换到深色模式"}
     >
-      {dark ? (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M8 1a.75.75 0 01.75.75v1a.75.75 0 01-1.5 0v-1A.75.75 0 018 1zm4.95 2.3a.75.75 0 010 1.06l-.7.7a.75.75 0 11-1.06-1.06l.7-.7a.75.75 0 011.06 0zM15 8a.75.75 0 01-.75.75h-1a.75.75 0 010-1.5h1A.75.75 0 0115 8zm-2.05 4.7a.75.75 0 010-1.06l.7-.7a.75.75 0 11-1.06-1.06l-.7.7a.75.75 0 011.06 1.06zM8 15a.75.75 0 01-.75-.75v-1a.75.75 0 011.5 0v1A.75.75 0 018 15zm-4.95-2.3a.75.75 0 010-1.06l.7-.7a.75.75 0 011.06 1.06l-.7.7a.75.75 0 01-1.06 0zM1 8a.75.75 0 01.75-.75h1a.75.75 0 010 1.5h-1A.75.75 0 011 8zm2.3-4.95a.75.75 0 010 1.06l-.7.7a.75.75 0 11-1.06-1.06l.7-.7a.75.75 0 011.06 0zM8 4a4 4 0 100 8 4 4 0 000-8z" />
-        </svg>
-      ) : (
-        <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
-          <path d="M6.914.344A.75.75 0 007.5.5v.95A6.004 6.004 0 0115 8a6 6 0 01-7.426 5.795A.75.75 0 007.5 13.5v-.95a6.004 6.004 0 01-7.426-5.795A.75.75 0 01.5 7.5h.95A6.004 6.004 0 0115 8a6 6 0 01-7.426 5.795A.75.75 0 017.5 13.5v-.95A6.004 6.004 0 01.074 8.795.75.75 0 01.5 7.5h.95A6.004 6.004 0 0115 8z" />
-        </svg>
-      )}
+      {/* Track */}
+      <span
+        className={`
+          block w-10 h-6 rounded-full transition-colors duration-300 ease-out
+          ${dark ? "bg-blue-600" : "bg-zinc-300 dark:bg-slate-600"}
+        `}
+      />
+      {/* Thumb */}
+      <span
+        className={`
+          absolute top-0.5 w-5 h-5 rounded-full bg-white shadow-[0_1px_3px_rgb(0,0,0,0.15)]
+          transition-all duration-300 ease-out flex items-center justify-center
+          ${dark ? "left-[18px]" : "left-[2px]"}
+        `}
+      >
+        {dark ? (
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+            <path d="M8 1.5a6.5 6.5 0 100 13 6.5 6.5 0 000-13z" fill="#3b82f6" />
+            <path d="M8 2a6 6 0 000 12V2z" fill="#3b82f6" />
+          </svg>
+        ) : (
+          <svg width="10" height="10" viewBox="0 0 16 16" fill="none">
+            <circle cx="8" cy="8" r="3" fill="#f59e0b" />
+            <path d="M8 1v1.5M8 13.5V15M1 8h1.5M13.5 8H15M3.05 3.05l1.06 1.06M11.89 11.89l1.06 1.06M3.05 12.95l1.06-1.06M11.89 4.11l1.06-1.06" stroke="#f59e0b" strokeWidth="1.2" strokeLinecap="round" />
+          </svg>
+        )}
+      </span>
     </button>
   );
 }

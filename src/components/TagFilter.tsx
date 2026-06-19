@@ -132,7 +132,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
   return (
     <div>
       {/* ============ Compact Filter Bar ============ */}
-      <div className="mb-10 rounded-2xl border border-zinc-100/60 dark:border-zinc-800/60 bg-white dark:bg-zinc-900 p-4 sm:p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)]">
+      <div className="mb-10 rounded-2xl border border-zinc-100/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)]">
         {/* Header */}
         <div className="flex items-center justify-between mb-3">
           <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
@@ -301,7 +301,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
             <a
               key={a.href}
               href={a.href}
-              className="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 dark:hover:bg-zinc-800/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+              className="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 dark:hover:bg-slate-800/50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div className="space-y-2 min-w-0">
@@ -317,7 +317,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
                       </span>
                     ))}
                   </div>
-                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-zinc-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
+                  <h3 className="text-xl font-semibold text-zinc-900 dark:text-slate-200 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors duration-300">
                     {a.title}
                   </h3>
                   <p className="text-zinc-500 leading-relaxed">{a.description}</p>
