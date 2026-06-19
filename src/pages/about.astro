@@ -1,0 +1,61 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="关于 Digital Garden"
+  description="一个完全组件化、支持深度交互、拥有原生 App 级视觉体验的数字花园。"
+>
+  <header class="not-prose mb-16">
+    <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
+      关于
+      <span class="block text-xl font-normal text-zinc-400 mt-2">Digital Garden</span>
+    </h1>
+  </header>
+
+  <p>
+    Digital Garden 是一个<strong>完全组件化的个人知识库</strong>。它不只是一个静态博客——每篇笔记都可以嵌入数据图表、交互式代码沙盒、智能图片卡片和沉浸式悬浮词条。
+  </p>
+
+  <p>
+    传统的 Markdown 只能表达静态文字。我们选择 <strong>MDX</strong>（Markdown + JSX），让知识管理进入"超级组件"时代：
+    笔记不再是文档，而是一个<strong>可交互的应用</strong>。
+  </p>
+
+  <h2>核心特性</h2>
+
+  <ul>
+    <li><strong>📊 数据可视化</strong> — 在笔记中直接嵌入 Recharts 图表，支持折线图与柱状图</li>
+    <li><strong>💬 沉浸式词条</strong> — 悬浮或点击即可展开术语解释，减少认知摩擦</li>
+    <li><strong>🔲 代码沙盒</strong> — 原生 iframe 沙盒，读者可在笔记中直接修改和运行代码</li>
+    <li><strong>🖼️ 智能卡片</strong> — 图片 + AI 摘要的瀑布流卡片，适合知识索引</li>
+    <li><strong>🍎 Apple 美学</strong> — 毛玻璃、弥散阴影、极致留白，原生 App 级视觉</li>
+  </ul>
+
+  <h2>技术栈</h2>
+
+  <p>
+    基于 <a href="https://astro.build" target="_blank" rel="noopener noreferrer">Astro</a> 构建，集成 React、Tailwind CSS v4 和 MDX。
+    通过 GitHub Actions 自动部署到 GitHub Pages，全程零服务器成本。
+  </p>
+
+  <div class="not-prose mt-12 flex gap-4">
+    <a
+      href="https://github.com/nicheface/astro-wiki"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-900 text-white text-sm font-medium transition-all duration-300 ease-out hover:bg-zinc-800 hover:scale-[1.02]"
+    >
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z"/>
+      </svg>
+      GitHub
+    </a>
+    <a
+      href="/astro-wiki/"
+      class="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-zinc-100 text-zinc-700 text-sm font-medium transition-all duration-300 ease-out hover:bg-zinc-200"
+    >
+      浏览笔记 &rarr;
+    </a>
+  </div>
+</Layout>
