@@ -223,7 +223,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
 
           {/* Popup card */}
           <div
-            className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-[0_20px_60px_rgb(0,0,0,0.12)] border border-zinc-200/60 max-h-[70vh] overflow-y-auto"
+            className="relative w-full max-w-lg mx-4 rounded-2xl bg-white dark:bg-slate-900 shadow-[0_20px_60px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgb(0,0,0,0.4)] border border-zinc-200/60 dark:border-slate-700/60 max-h-[70vh] overflow-y-auto"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
