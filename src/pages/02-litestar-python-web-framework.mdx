@@ -1,0 +1,225 @@
+---
+layout: ../layouts/Layout.astro
+title: "Litestar：高性能 ASGI Python Web 框架"
+description: "异步优先、Rust 加速的 Python ASGI 框架——msgspec 序列化 + SQLAlchemy 深度集成 + OpenAPI 3.1，基准测试全面优于 FastAPI。"
+tags: [python, web, 框架, ASGI, 异步, 高性能, API]
+---
+
+import DataChart from "../components/DataChartWrapper.astro";
+import HoverDetail from "../components/HoverDetailWrapper.astro";
+import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
+
+{/* ===== 标签栏 ===== */}
+<div class="not-prose mb-8 flex flex-wrap gap-2">
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">python</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">web</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">框架</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">ASGI</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">异步</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">高性能</span>
+  <span class="px-2.5 py-1 rounded-md bg-zinc-100 text-xs font-medium text-zinc-500">API</span>
+</div>
+
+{/* ===== 开篇 ===== */}
+<div class="not-prose mb-16">
+  <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
+    Litestar
+    <span class="block text-xl font-normal text-zinc-400 mt-2">高性能 ASGI Python Web 框架</span>
+  </h1>
+  <div class="flex items-center gap-4 mt-6">
+    <time class="text-sm text-zinc-400" datetime="2026-06-20">2026 年 6 月 20 日</time>
+    <span class="text-zinc-200">·</span>
+    <span class="text-sm text-zinc-400">阅读约 4 分钟</span>
+  </div>
+</div>
+
+## 什么是 Litestar？
+
+<HoverDetail term="Litestar" href="https://litestar.dev">Litestar（前身 Starlite）是一个生产级的、异步优先的 ASGI Python Web 框架，在设计上追求"异步优先但同步代码零惩罚"，默认使用 Rust 加速的 msgspec 做数据验证和序列化，在多数基准测试中吞吐量优于 FastAPI。GitHub 约 5,900+ stars（2026）。</HoverDetail> 是一款轻量但全功能的 <HoverDetail term="ASGI" href="https://asgi.readthedocs.io">ASGI（Asynchronous Server Gateway Interface）是 Python Web 服务器与异步 Web 框架之间的标准接口，是 WSGI 的异步继任者，支持 WebSocket、HTTP/2 和长连接等现代协议。</HoverDetail> Python 框架。它的前身是 **Starlite**（因与 Starlette 名称过于相似而改名），核心设计哲学是：
+
+> **"异步优先，但同步代码零惩罚。"**
+
+与其他全栈框架不同，Litestar 不绑手绑脚——你可以从简单 API 起步，逐步扩展到大型分层项目，框架能力随需求自然生长。
+
+---
+
+## 性能基准
+
+Litestar 的杀手锏是默认使用 <HoverDetail term="msgspec" href="https://jcristharif.com/msgspec/">msgspec 是一个基于 Rust 的 Python 序列化库（通过 PyO3），提供 JSON/MessagePack 编码解码和 Schema 验证，比 Pydantic v2 快约 12 倍，比标准 json 快约 85 倍。Litestar 用它替代 Pydantic 作为默认数据层。</HoverDetail> 做序列化——这是一套 C（Rust 通过 PyO3）实现的数据验证引擎，比 Pydantic v2 快约 **12 倍**。
+
+下面是 Litestar 与 FastAPI 在同等条件下的性能对比：
+
+<DataChart
+  data={[
+    { scenario: "JSON 序列化", Litestar: 12.4, FastAPI: 28.7 },
+    { scenario: "路由分发", Litestar: 8.2, FastAPI: 15.1 },
+    { scenario: "DI 注入", Litestar: 5.6, FastAPI: 18.3 },
+    { scenario: "请求解析", Litestar: 9.8, FastAPI: 22.4 },
+  ]}
+  type="bar"
+  dataKey="Litestar"
+  xKey="scenario"
+  color="#3b82f6"
+  title="框架内部操作延迟对比 (ms, 越低越好)"
+  height={280}
+/>
+
+> **注意**：在实际数据库查询场景下，两框架的吞吐量差距缩小至 1.3–1.7×，因为数据库 I/O 和网络延迟主导了响应时间。微基准仅供参考。
+
+<DataChart
+  data={[
+    { metric: "空闲内存\n(100端点)", Litestar: 57, FastAPI: 115 },
+    { metric: "导入开销", Litestar: 21, FastAPI: 29.5 },
+    { metric: "峰值内存\n(1000并发)", Litestar: 1.4, FastAPI: 1.8 },
+  ]}
+  type="bar"
+  dataKey="Litestar"
+  xKey="metric"
+  color="#f59e0b"
+  title="内存占用对比 (MB, 越低越好)"
+  height={260}
+/>
+
+---
+
+## 内置能力清单
+
+Litestar 的一大优势是**电池含量高**——以下是框架直接内置的功能：
+
+| 类别 | 内置能力 |
+|------|---------|
+| **数据层** | msgspec 序列化、Pydantic v1/v2、dataclasses、attrs 多后端共存 |
+| **依赖注入** | pytest 风格、分层作用域（App → Router → Controller → Handler） |
+| **API 文档** | OpenAPI 3.1 自动生成 + Swagger / ReDoc / Stoplight Elements |
+| **安全** | CORS、CSRF、JWT 认证、Rate Limiting、Guards 守卫机制 |
+| **数据库** | SQLAlchemy 插件（含 DTO 自动映射）、原生 Repository 模式 |
+| **通信** | WebSocket、GraphQL、gRPC（原生支持，无需第三方插件） |
+| **中间件** | 压缩（GZip/Brotli）、Session、CORS、Logging |
+| **生命周期** | `before_send` / `after_response` 细粒度钩子 |
+
+---
+
+## 代码示例
+
+### Hello World
+
+<LiveCodeBlock
+  title="最简 Litestar 应用"
+  previewHeight={260}
+  code={`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    display: flex; align-items: center; justify-content: center;
+    min-height: 100vh; font-family: system-ui, sans-serif; background: #fafafa;
+  }
+  pre {
+    background: #1c1c1e; color: #86efac; padding: 24px 32px;
+    border-radius: 12px; font-size: 15px; line-height: 1.8;
+    font-family: 'SF Mono', 'JetBrains Mono', monospace;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
+  }
+  .kw { color: #c084fc; } .fn { color: #60a5fa; } .str { color: #f9a8d4; }
+  .cm { color: #6b7280; }
+</style>
+</head>
+<body>
+<pre><span class="kw">from</span> litestar <span class="kw">import</span> Litestar, get
+
+<span class="cm"># 路由定义</span>
+<span class="fn">@get</span>(<span class="str">"/"</span>)
+<span class="kw">async def</span> <span class="fn">hello_world</span>() -> <span class="kw">dict</span>[<span class="kw">str</span>, <span class="kw">str</span>]:
+    <span class="kw">return</span> {<span class="str">"hello"</span>: <span class="str">"world"</span>}
+
+<span class="cm"># 应用实例</span>
+app = Litestar(route_handlers=[hello_world])
+</pre>
+</body>
+</html>`}
+/>
+
+### 带数据验证的完整示例
+
+```python
+from litestar import Litestar, post
+from msgspec import Struct
+
+# ---- 数据模型 ----
+class ItemCreateDTO(Struct):
+    name: str
+    price: float
+    tags: list[str] = []
+
+# ---- 路由 ----
+@post("/items")
+async def create_item(data: ItemCreateDTO) -> ItemCreateDTO:
+    """请求体自动通过 msgspec 验证和反序列化。"""
+    return data  # 自动序列化为 JSON 响应
+
+app = Litestar(route_handlers=[create_item])
+```
+
+### 类式 Controller 组织
+
+```python
+from litestar import Controller, get, post
+from litestar.dto import DTOConfig
+from msgspec import Struct
+
+class UserDTO(Struct):
+    id: int
+    name: str
+    email: str
+
+class UserController(Controller):
+    path = "/users"
+
+    @get("/")
+    async def list_users(self) -> list[UserDTO]:
+        ...
+
+    @post("/")
+    async def create_user(self, data: UserDTO) -> UserDTO:
+        ...
+```
+
+---
+
+## Litestar vs FastAPI：选型决策
+
+<HoverDetail term="依赖注入（DI）" href="https://docs.litestar.dev/latest/usage/dependency-injection.html">Litestar 的依赖注入系统借鉴了 pytest 的 fixture 设计，通过 Provide 函数声明依赖，支持 App、Router、Controller、Handler 四级作用域。FastAPI 的 Depends() 更隐式，缺少层级化的生命周期管理。</HoverDetail> 是两者最显著的架构差异之一。
+
+| 场景 | 推荐框架 | 理由 |
+|------|---------|------|
+| 高并发微服务 | **Litestar** | msgspec 序列化快 12×，内存占用低 50% |
+| 团队已熟悉 FastAPI | FastAPI | 降低重培训成本 |
+| 需要 GraphQL/gRPC | **Litestar** | 原生支持，无需第三方 |
+| 大量第三方集成 | FastAPI | 生态大 10 倍以上 |
+| 新项目，追求性能 | **Litestar** | 技术债更少，内置安全功能更全 |
+| 招聘优先 | FastAPI | 候选人池大（OpenAI、Uber 等都在用） |
+
+> **共识**：框架吞吐量差异在真实数据库负载下会大幅缩小。选型应优先考虑团队经验、生态需求和长期维护——而非微基准。
+
+---
+
+## 核心设计亮点
+
+1. **DTO 系统**：通过插件架构，SQLAlchemy 模型可以直接作为路由参数类型，框架自动处理序列化和 OpenAPI Schema 生成——无需手写中间转换层。
+
+2. **Guards 守卫**：路由级别的鉴权守卫，支持组合和优先级，比 FastAPI 的 `Depends` 注入更显式、更安全。
+
+3. **分层架构**：原生支持 Controller → Service → Repository 分层组织，对于大型项目来说，比 FastAPI 的扁平路由文件更易维护。
+
+---
+
+<div class="not-prose mt-16 p-6 rounded-2xl bg-zinc-50 border border-zinc-100">
+  <p class="text-sm text-zinc-500 leading-relaxed">
+    <strong class="text-zinc-700">📖 延伸阅读</strong><br/>
+    <a href="https://litestar.dev" class="text-blue-600 hover:text-blue-500">Litestar 官方文档</a> &middot;
+    <a href="https://github.com/litestar-org/litestar" class="text-blue-600 hover:text-blue-500">GitHub 仓库</a> &middot;
+    <a href="https://docs.litestar.dev/latest/benchmarks.html" class="text-blue-600 hover:text-blue-500">性能基准测试</a>
+  </p>
+</div>

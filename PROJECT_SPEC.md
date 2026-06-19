@@ -339,6 +339,7 @@ npm run preview  # 预览构建产物
 | 操作 | 原因 |
 |------|------|
 | 使用 `@codesandbox/sandpack-react` | 国内网络 `__csb_relay` 加载失败 → 白屏，已替换为原生方案 |
+| MDX 中 `<HoverDetail>` 标签内断行 | MDX 将换行视为段落边界 → 编译报错。**所有 JSX 组件标签必须与 children 在同一行** |
 | 在 MDX 中直接导入 `.tsx` React 组件 | 无 `client:load` → 交互全部失效 |
 | 使用 `@tailwindcss/vite` | 与 Astro 6 的 Vite 7 版本冲突 |
 | 使用 `gray-*` 色系 | 项目统一使用 `zinc-*` |
@@ -409,6 +410,8 @@ const { prop1, prop2 } = Astro.props;
 | 2026-06-20 | 文档：创建项目执行规范 PROJECT_SPEC.md | 当前 |
 | 2026-06-20 | 新增 §2 MDX 写作哲学：用组件思考 | 当前 |
 | 2026-06-20 | 重构：LiveCodeBlock 从 Sandpack 替换为原生 textarea+iframe | 当前 |
+| 2026-06-20 | 新增笔记：Litestar 高性能 ASGI Python Web 框架 | 当前 |
+| 2026-06-20 | 经验：MDX 中 JSX 组件必须与 children 同行，不可断行 | 当前 |
 
 ---
 
