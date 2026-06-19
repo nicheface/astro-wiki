@@ -1,0 +1,214 @@
+---
+layout: ../layouts/Layout.astro
+title: "知识的未来：从超链接到超级组件"
+description: "探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。"
+---
+
+import DataChart from "../components/DataChart.tsx";
+import SmartImageCard from "../components/SmartImageCard.astro";
+import HoverDetail from "../components/HoverDetail.tsx";
+import LiveCodeBlock from "../components/LiveCodeBlock.tsx";
+
+{/* ===== 开篇 ===== */}
+<div class="not-prose mb-16">
+  <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium tracking-wide mb-6">
+    <span class="relative flex h-2 w-2">
+      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+      <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+    </span>
+    笔记 #001
+  </div>
+  <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
+    知识的未来
+    <span class="block text-xl font-normal text-zinc-400 mt-2">
+      从超链接到超级组件
+    </span>
+  </h1>
+  <div class="flex items-center gap-4 mt-6">
+    <time class="text-sm text-zinc-400" datetime="2026-06-20">2026 年 6 月 20 日</time>
+    <span class="text-zinc-200">·</span>
+    <span class="text-sm text-zinc-400">阅读约 5 分钟</span>
+  </div>
+</div>
+
+## 引言：当笔记不再只是文字
+
+互联网的伟大发明之一是**超链接**——它让知识从孤岛变成了网络。但六十多年过去了，大部分"知识库"本质上依然只是带有超链接的静态文本。
+
+想象一下：如果一篇笔记里不仅能写文字，还能嵌入**实时数据图表**、**可交互代码沙盒**、**智能卡片**和**沉浸式词条解释**——知识会怎样呈现？
+
+这就是 **Digital Garden** 正在探索的未来。
+
+---
+
+## 组件一：数据可视化 — 知识增长曲线
+
+下面是使用 `DataChart` 组件渲染的一张知识增长趋势图。数据直接以 JSON 格式传入，图表自动渲染：
+
+<DataChart
+  data={[
+    { year: "2018", notes: 12, topics: 4 },
+    { year: "2019", notes: 28, topics: 9 },
+    { year: "2020", notes: 56, topics: 14 },
+    { year: "2021", notes: 89, topics: 21 },
+    { year: "2022", notes: 142, topics: 30 },
+    { year: "2023", notes: 210, topics: 42 },
+    { year: "2024", notes: 315, topics: 58 },
+    { year: "2025", notes: 470, topics: 76 },
+  ]}
+  type="line"
+  dataKey="notes"
+  xKey="year"
+  color="#3b82f6"
+  title="个人知识库笔记增长 (2018–2025)"
+  height={300}
+/>
+
+<DataChart
+  data={[
+    { category: "技术", count: 186 },
+    { category: "设计", count: 94 },
+    { category: "哲学", count: 62 },
+    { category: "商业", count: 48 },
+    { category: "生活", count: 37 },
+    { category: "其他", count: 43 },
+  ]}
+  type="bar"
+  dataKey="count"
+  xKey="category"
+  color="#f59e0b"
+  title="知识主题分布 (柱状图)"
+  height={280}
+/>
+
+> **💡 这就是超级组件的力量**：你不需要在外部工具中画图、截图、粘贴。数据即图表，修改数据，图表自动更新。
+
+---
+
+## 组件二：AI 智能摘要卡片
+
+文字是线性的，但理解一张图只需要一瞬。`SmartImageCard` 组件将图片、标题和 AI 摘要融合为一张精美的卡片，适合做瀑布流知识索引：
+
+<div class="not-prose grid grid-cols-1 sm:grid-cols-2 gap-6 my-10">
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=600&h=450&fit=crop"
+    alt="抽象知识网络"
+    title="知识图谱的可视化前沿"
+    summary="图数据库与力导向布局算法正在改变我们理解知识关联的方式，从树状结构走向网状思维。"
+    href="https://en.wikipedia.org/wiki/Knowledge_graph"
+  />
+
+  <SmartImageCard
+    src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=600&h=450&fit=crop"
+    alt="编程与思考"
+    title="代码作为思考工具"
+    summary="编程不仅是构建软件的手段，更是一种将模糊思想转化为精确模型的认知增强技术。"
+    href="https://en.wikipedia.org/wiki/Computational_thinking"
+  />
+</div>
+
+---
+
+## 组件三：沉浸式词条悬浮
+
+在传统文章中，术语解释要么放在文末、要么需要读者自行搜索。现在，<HoverDetail term="数字花园" href="https://en.wikipedia.org/wiki/Digital_garden">
+  数字花园（Digital Garden）是一种非线性、持续生长的个人知识管理范式。与传统的"博客"不同，数字花园中的内容不按时间排序，而是像植物一样自由生长、交叉关联、不断修剪。
+</HoverDetail> 这个概念可以通过悬浮组件即时解释。
+
+再比如，当你在笔记中提到 <HoverDetail term="组件化思维" href="https://react.dev/learn/thinking-in-react">
+  组件化思维（Component Thinking）源自软件工程中的组件设计模式。它将复杂系统拆解为独立、可复用的单元，每个单元封装自己的状态、样式和行为——这与知识管理中将概念模块化、可组合的理念不谋而合。
+</HoverDetail>，读者不需要翻到附录——信息就在指尖。
+
+> **设计哲学**：好的知识库应该减少「认知摩擦」，让读者始终保持流动的阅读状态，而不是在页面之间反复跳转。
+
+---
+
+## 组件四：可编辑代码沙盒
+
+理论讲再多，不如动手试一试。下面的 `LiveCodeBlock` 组件允许你在笔记内部直接编写和运行 HTML/JS 代码：
+
+<LiveCodeBlock
+  title="试一试：一个极简计数器"
+  code={`<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      font-family: system-ui, sans-serif;
+      background: #fafafa;
+    }
+    .counter {
+      font-size: 64px;
+      font-weight: 600;
+      color: #18181b;
+      margin-bottom: 24px;
+      font-variant-numeric: tabular-nums;
+    }
+    button {
+      padding: 10px 28px;
+      font-size: 16px;
+      border: none;
+      border-radius: 12px;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    button:hover {
+      background: #2563eb;
+      transform: scale(1.04);
+    }
+    button:active {
+      transform: scale(0.96);
+    }
+  </style>
+</head>
+<body>
+  <div class="counter" id="counter">0</div>
+  <button onclick="increment()">+1</button>
+  <script>
+    let count = 0;
+    function increment() {
+      count++;
+      document.getElementById('counter').textContent = count;
+    }
+  </script>
+</body>
+</html>`}
+  template="static"
+  title="交互演示：点击按钮试试 👆"
+  previewHeight={320}
+/>
+
+你可以修改上面的代码，比如把 `+1` 改成 `+5`，把颜色改成你喜欢的样子——修改生效实时可见。
+
+---
+
+## 结语：知识库的第四范式
+
+回顾知识管理的演化：
+
+1. **纸笔时代**：线性记录，难以检索
+2. **超文本时代**：Wiki 和博客，静态链接
+3. **富媒体时代**：Notion/Obsidian，嵌入多媒体但缺乏交互
+4. **超级组件时代**：**数据、代码、可视化与交互深度融合**——笔记本身成为应用
+
+Digital Garden 的目标不是再做一个博客框架。它想回答的问题是：
+
+**当知识的载体不再是静态文档，而是一个图灵完备的交互环境时——** 知识的表达力将获得怎样的解放？
+
+---
+
+<div class="not-prose mt-16 p-6 rounded-2xl bg-zinc-50 border border-zinc-100">
+  <p class="text-sm text-zinc-500 leading-relaxed">
+    <strong class="text-zinc-700">📝 这篇文章本身就是一个证明。</strong><br/>
+    你刚刚看到的四个超级组件——DataChart、SmartImageCard、HoverDetail、LiveCodeBlock——全部在这篇 MDX 文件中以声明式语法调用。没有外部工具，没有截图，没有 iframe 嵌入。这就是下一代知识库的样子。
+  </p>
+</div>

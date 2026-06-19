@@ -1,0 +1,57 @@
+---
+import Layout from "../layouts/Layout.astro";
+---
+
+<Layout
+  title="Digital Garden"
+  description="一个完全组件化、支持深度交互、拥有原生 App 级视觉体验的数字花园。"
+>
+  <!-- Hero Section -->
+  <header class="not-prose mb-20">
+    <div class="space-y-6">
+      <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-600 text-xs font-medium tracking-wide">
+        <span class="relative flex h-2 w-2">
+          <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+          <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+        </span>
+        知识库 v1.0
+      </div>
+      <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-zinc-900 leading-tight">
+        数字花园
+        <span class="block text-2xl sm:text-3xl font-normal text-zinc-400 mt-3 leading-relaxed">
+          A fully componentized digital garden.
+        </span>
+      </h1>
+      <p class="text-xl text-zinc-500 leading-loose max-w-2xl">
+        这不仅是一个静态博客，而是一个完全组件化、支持深度交互、拥有原生 App 级视觉体验的下一代个人知识库。
+      </p>
+    </div>
+  </header>
+
+  <!-- Articles List -->
+  <section class="not-prose">
+    <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
+      最新笔记
+    </h2>
+    <div class="space-y-6">
+      <a
+        href="/astro-wiki/01-future-of-knowledge"
+        class="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
+      >
+        <div class="flex items-start justify-between gap-4">
+          <div class="space-y-2">
+            <h3 class="text-xl font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">
+              知识的未来：从超链接到超级组件
+            </h3>
+            <p class="text-zinc-500 leading-relaxed">
+              探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。
+            </p>
+          </div>
+          <time class="shrink-0 text-sm text-zinc-400 mt-1" datetime="2026-06-20">
+            2026.06.20
+          </time>
+        </div>
+      </a>
+    </div>
+  </section>
+</Layout>

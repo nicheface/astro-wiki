@@ -1,0 +1,89 @@
+---
+// ===== Layout.astro — Apple-inspired Master Layout =====
+import "../styles/global.css";
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title = "Digital Garden", description = "" } = Astro.props;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description || title} />
+    <title>{title} | Digital Garden</title>
+    <link rel="icon" type="image/svg+xml" href="/astro-wiki/favicon.svg" />
+  </head>
+  <body class="min-h-screen bg-white">
+    <!-- ===== Glassmorphism Navigation ===== -->
+    <nav
+      class="sticky top-0 z-50 backdrop-blur-xl bg-white/70 supports-[backdrop-filter]:bg-white/60 border-b border-zinc-200/40"
+    >
+      <div class="max-w-4xl mx-auto px-6 sm:px-10">
+        <div class="flex items-center justify-between h-16">
+          <!-- Logo / Site Title -->
+          <a
+            href="/astro-wiki/"
+            class="text-lg font-semibold tracking-tight text-zinc-900 transition-all duration-300 ease-out hover:text-blue-600"
+          >
+            <span class="inline-flex items-center gap-2">
+              <!-- Subtle dot indicator -->
+              <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
+              Digital Garden
+            </span>
+          </a>
+
+          <!-- Nav Links -->
+          <div class="flex items-center gap-6">
+            <a
+              href="/astro-wiki/"
+              class="text-sm font-medium text-zinc-500 transition-all duration-300 ease-out hover:text-zinc-900"
+            >
+              笔记
+            </a>
+            <a
+              href="/astro-wiki/about"
+              class="text-sm font-medium text-zinc-500 transition-all duration-300 ease-out hover:text-zinc-900"
+            >
+              关于
+            </a>
+            <a
+              href="https://github.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="text-sm font-medium text-zinc-400 transition-all duration-300 ease-out hover:text-zinc-700"
+            >
+              GitHub
+            </a>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===== Main Content Area ===== -->
+    <main class="max-w-4xl mx-auto px-6 sm:px-10 py-12 sm:py-16">
+      <article class="prose">
+        <slot />
+      </article>
+    </main>
+
+    <!-- ===== Minimal Footer ===== -->
+    <footer class="border-t border-zinc-100">
+      <div class="max-w-4xl mx-auto px-6 sm:px-10 py-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p class="text-sm text-zinc-400">
+            &copy; {new Date().getFullYear()} Digital Garden &mdash; Crafted with care.
+          </p>
+          <p class="text-xs text-zinc-300">
+            Powered by Astro &middot; React &middot; MDX
+          </p>
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

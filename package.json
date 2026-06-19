@@ -1,0 +1,23 @@
+{
+  "name": "astro-wiki",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "Next-Gen Personal Knowledge Base — a digital garden built with Astro, React & MDX",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "dependencies": {
+    "@astrojs/mdx": "^6.0.3",
+    "@astrojs/react": "^5.0.7",
+    "@codesandbox/sandpack-react": "^2.20.0",
+    "@tailwindcss/postcss": "^4.3.1",
+    "astro": "^6.4.8",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "recharts": "^3.8.1",
+    "tailwindcss": "^4.3.1"
+  }
+}

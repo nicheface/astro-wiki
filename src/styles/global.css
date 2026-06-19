@@ -1,0 +1,76 @@
+@import "tailwindcss";
+
+/* ===== Apple-inspired Design Token ===== */
+@theme {
+  --font-sans: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+    "SF Pro Text", "Helvetica Neue", "PingFang SC", "Noto Sans SC",
+    "Microsoft YaHei", sans-serif;
+  --font-mono: "SF Mono", "JetBrains Mono", "Fira Code", "Cascadia Code",
+    "Consolas", monospace;
+}
+
+/* ===== Global Reset & Typography ===== */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  @apply bg-white text-zinc-800 leading-relaxed;
+}
+
+/* ===== MDX / Prose Styling ===== */
+.prose {
+  @apply max-w-none;
+}
+
+.prose h1 {
+  @apply text-4xl font-bold tracking-tight text-zinc-900 mt-16 mb-6;
+}
+
+.prose h2 {
+  @apply text-2xl font-semibold tracking-tight text-zinc-900 mt-12 mb-4;
+}
+
+.prose h3 {
+  @apply text-xl font-medium text-zinc-800 mt-8 mb-3;
+}
+
+.prose p {
+  @apply text-lg leading-loose text-zinc-600 my-6;
+}
+
+.prose a {
+  @apply text-blue-600 decoration-1 underline-offset-2 hover:text-blue-500 transition-colors duration-200;
+}
+
+.prose code {
+  @apply text-sm bg-zinc-100 text-zinc-800 px-1.5 py-0.5 rounded-md font-mono;
+}
+
+.prose pre {
+  @apply bg-zinc-900 text-zinc-100 rounded-2xl p-6 overflow-x-auto my-8;
+}
+
+.prose pre code {
+  @apply bg-transparent text-zinc-100 p-0;
+}
+
+.prose blockquote {
+  @apply border-l-2 border-blue-400 pl-6 italic text-zinc-500 my-8;
+}
+
+.prose ul,
+.prose ol {
+  @apply text-lg text-zinc-600 space-y-2 my-6 pl-6;
+}
+
+.prose li::marker {
+  @apply text-zinc-400;
+}
+
+.prose hr {
+  @apply border-zinc-200 my-12;
+}

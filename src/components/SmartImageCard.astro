@@ -1,0 +1,80 @@
+---
+// ===== SmartImageCard.astro — AI Image Card with Apple-level Craft =====
+export interface Props {
+  /** Image URL */
+  src: string;
+  /** Image alt text */
+  alt: string;
+  /** Card title */
+  title: string;
+  /** AI-generated summary (single line) */
+  summary: string;
+  /** Optional link to full article */
+  href?: string;
+}
+
+const { src, alt, title, summary, href } = Astro.props;
+
+const cardClasses =
+  "not-prose group block rounded-2xl overflow-hidden bg-white border border-zinc-100/60 transition-all duration-500 ease-out hover:shadow-[0_12px_40px_rgb(0,0,0,0.06)] hover:-translate-y-1";
+---
+
+{
+  href ? (
+    <a href={href} class={cardClasses}>
+      <div class="relative overflow-hidden aspect-[4/3] bg-zinc-100">
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
+      </div>
+      <div class="p-5 space-y-2">
+        <h3 class="text-base font-semibold text-zinc-900 leading-snug line-clamp-1">
+          {title}
+        </h3>
+        <p class="text-sm text-zinc-500 leading-relaxed line-clamp-2">
+          {summary}
+        </p>
+        <div class="flex items-center gap-2 pt-1">
+          <span class="inline-flex items-center gap-1 text-xs text-zinc-400">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-blue-400">
+              <path d="M6 0L6.75 4.5L11.25 5.25L6.75 6L6 10.5L5.25 6L0.75 5.25L5.25 4.5L6 0Z" fill="currentColor"/>
+            </svg>
+            AI 摘要
+          </span>
+        </div>
+      </div>
+    </a>
+  ) : (
+    <div class={cardClasses}>
+      <div class="relative overflow-hidden aspect-[4/3] bg-zinc-100">
+        <img
+          src={src}
+          alt={alt}
+          loading="lazy"
+          class="w-full h-full object-cover transition-all duration-700 ease-out group-hover:scale-105"
+        />
+        <div class="absolute inset-0 bg-gradient-to-t from-black/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 ease-out" />
+      </div>
+      <div class="p-5 space-y-2">
+        <h3 class="text-base font-semibold text-zinc-900 leading-snug line-clamp-1">
+          {title}
+        </h3>
+        <p class="text-sm text-zinc-500 leading-relaxed line-clamp-2">
+          {summary}
+        </p>
+        <div class="flex items-center gap-2 pt-1">
+          <span class="inline-flex items-center gap-1 text-xs text-zinc-400">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" class="text-blue-400">
+              <path d="M6 0L6.75 4.5L11.25 5.25L6.75 6L6 10.5L5.25 6L0.75 5.25L5.25 4.5L6 0Z" fill="currentColor"/>
+            </svg>
+            AI 摘要
+          </span>
+        </div>
+      </div>
+    </div>
+  )
+}
