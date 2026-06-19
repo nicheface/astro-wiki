@@ -64,6 +64,7 @@ export const ALL_TAGS: TagDef[] = [
 
   // ---- Level 3 (under 方法论) ----
   { key: "component", label: "组件化", level: 3, parent: "methodology" },
+  { key: "problem-solving", label: "问题解决", level: 3, parent: "methodology" },
 
   // ---- Level 3 (under AI) ----
   { key: "agent", label: "Agent", level: 3, parent: "ai" },

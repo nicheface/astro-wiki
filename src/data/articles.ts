@@ -12,6 +12,14 @@ export interface ArticleMeta {
 
 export const articles: ArticleMeta[] = [
   {
+    href: "/astro-wiki/04-source-flow-system",
+    title: "源流系统 —— 问题解决工作表",
+    description:
+      "一套结构化五步问题解决框架：破局→探底→锚心→造流→越迁。从情绪管理到系统升级，附可打印 A4 工作表。",
+    date: "2026-06-20",
+    tags: ["thinking", "methodology", "problem-solving"],
+  },
+  {
     href: "/astro-wiki/03-ai-agent-tools",
     title: "AI Agent 工具三则：Dokobot / Huashu Design / PPT Master",
     description:
