@@ -68,7 +68,7 @@ export default function ArticleTag({ tagKey }: ArticleTagProps) {
         <div
           ref={popoverRef}
           className={`
-            absolute left-0 bottom-full mb-2 z-50
+            absolute left-0 top-full mt-2 z-50
             w-64 p-4
             rounded-xl
             bg-white/90 backdrop-blur-xl
@@ -78,7 +78,7 @@ export default function ArticleTag({ tagKey }: ArticleTagProps) {
           `}
         >
           {/* Arrow */}
-          <div className="absolute left-4 -bottom-1.5 w-3 h-3 bg-white/90 backdrop-blur-xl border-r border-b border-zinc-100/60 rotate-45" />
+          <div className="absolute left-4 -top-1.5 w-3 h-3 bg-white/90 backdrop-blur-xl border-l border-t border-zinc-100/60 rotate-45" />
 
           <p className="text-xs font-semibold text-zinc-900 mb-3">
             包含「{label}」的笔记
@@ -87,20 +87,15 @@ export default function ArticleTag({ tagKey }: ArticleTagProps) {
           {related.length === 0 ? (
             <p className="text-xs text-zinc-400">暂无其他笔记</p>
           ) : (
-            <div className="space-y-2">
+            <div className="space-y-1">
               {related.map((article) => (
                 <a
                   key={article.href}
                   href={article.href}
                   onClick={close}
-                  className="block p-2.5 rounded-lg bg-zinc-50 hover:bg-zinc-100 transition-colors duration-150 group/link"
+                  className="block text-sm text-zinc-600 hover:text-blue-600 transition-colors duration-150 truncate py-0.5"
                 >
-                  <p className="text-sm font-medium text-zinc-800 group-hover/link:text-blue-600 transition-colors line-clamp-1">
-                    {article.title}
-                  </p>
-                  <p className="text-xs text-zinc-400 mt-0.5 line-clamp-1">
-                    {article.description}
-                  </p>
+                  {article.title}
                 </a>
               ))}
             </div>
