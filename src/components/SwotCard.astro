@@ -20,9 +20,9 @@ const wItems = JSON.parse(weaknesses) as { label: string; desc: string }[];
   {/* Body with two inner cards */}
   <div class="p-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
     {/* Strengths */}
-    <div class="rounded-2xl p-5 relative overflow-hidden" style="background: #f0fdf4;">
-      <div class="dark:hidden absolute top-2 right-3 text-[64px] font-bold leading-none select-none" style="color: #bbf7d0;">S</div>
-      <div class="hidden dark:block absolute top-2 right-3 text-[64px] font-bold leading-none select-none" style="color: #064e3b20;">S</div>
+    <div class="rounded-2xl p-5 relative overflow-hidden bg-green-50 dark:bg-green-950">
+      <div class="dark:hidden absolute top-2 right-3 text-[64px] font-bold leading-none select-none text-green-200">S</div>
+      <div class="hidden dark:block absolute top-2 right-3 text-[64px] font-bold leading-none select-none text-green-900/20">S</div>
       <h5 class="relative text-base font-bold text-green-900 dark:text-green-300 mb-3 pb-3 border-b border-green-200 dark:border-green-800/50">Strengths</h5>
       <div class="relative space-y-4">
         {sItems.map((item) => (
@@ -35,9 +35,9 @@ const wItems = JSON.parse(weaknesses) as { label: string; desc: string }[];
     </div>
 
     {/* Weaknesses */}
-    <div class="rounded-2xl p-5 relative overflow-hidden" style="background: #fef2f2;">
-      <div class="dark:hidden absolute top-2 right-3 text-[64px] font-bold leading-none select-none" style="color: #fecaca;">W</div>
-      <div class="hidden dark:block absolute top-2 right-3 text-[64px] font-bold leading-none select-none" style="color: #7f1d1d20;">W</div>
+    <div class="rounded-2xl p-5 relative overflow-hidden bg-red-50 dark:bg-red-950">
+      <div class="dark:hidden absolute top-2 right-3 text-[64px] font-bold leading-none select-none text-red-200">W</div>
+      <div class="hidden dark:block absolute top-2 right-3 text-[64px] font-bold leading-none select-none text-red-900/20">W</div>
       <h5 class="relative text-base font-bold text-red-900 dark:text-red-300 mb-3 pb-3 border-b border-red-200 dark:border-red-800/50">Weaknesses</h5>
       <div class="relative space-y-4">
         {wItems.map((item) => (
