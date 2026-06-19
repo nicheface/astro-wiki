@@ -1,0 +1,46 @@
+---
+// ===== SwotCard.astro — Reusable pros/cons or SWOT analysis card =====
+// Usage in MDX:
+//   <SwotCard title="使用 MDX 写技术内容" itemsJson='[{"label":"Strengths","children":[...]},{"label":"Weaknesses","children":[...]}]' />
+export interface Props {
+  title: string;
+  itemsJson: string; // JSON string of { label, children: { label, desc }[] }[]
+}
+
+const { title, itemsJson } = Astro.props;
+const items = JSON.parse(itemsJson) as {
+  label: string;
+  children: { label: string; desc: string }[];
+}[];
+---
+
+<div class="not-prose my-8 rounded-2xl border border-zinc-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900">
+  <div class="px-5 py-3 bg-zinc-50 dark:bg-slate-800/50 border-b border-zinc-200/60 dark:border-slate-700/60">
+    <h4 class="text-sm font-semibold text-zinc-800 dark:text-slate-200">{title}</h4>
+  </div>
+  <div class="p-5 space-y-4">
+    {items.map((group) => (
+      <div>
+        <h5 class="text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-slate-400 mb-2.5">
+          {group.label}
+        </h5>
+        <div class="space-y-2">
+          {group.children.map((child) => (
+            <div class="flex items-start gap-3 p-3 rounded-lg bg-zinc-50 dark:bg-slate-800/40">
+              <div class={`
+                w-5 h-5 rounded-full flex items-center justify-center shrink-0 mt-0.5
+                ${group.label === "Strengths" || group.label === "优点" ? "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400" : "bg-amber-100 dark:bg-amber-900/30 text-amber-600 dark:text-amber-400"}
+              `}>
+                <span class="text-[10px] font-bold">{group.label === "Strengths" || group.label === "优点" ? "+" : "−"}</span>
+              </div>
+              <div>
+                <p class="text-sm font-medium text-zinc-800 dark:text-slate-200">{child.label}</p>
+                <p class="text-xs text-zinc-500 dark:text-slate-400 mt-0.5">{child.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    ))}
+  </div>
+</div>

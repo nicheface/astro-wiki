@@ -1,0 +1,39 @@
+---
+// ===== StepFlow.astro — Horizontal step visualization =====
+// Usage in MDX:
+//   <StepFlow title="发布流程" itemsJson='[{"step":1,"label":"写完正文"},{"step":2,"label":"本地预览"},...]' />
+export interface Props {
+  title: string;
+  itemsJson: string; // JSON string of { step: number, label: string }[]
+}
+
+const { title, itemsJson } = Astro.props;
+const items = JSON.parse(itemsJson) as { step: number; label: string }[];
+---
+
+<div class="not-prose my-8 rounded-2xl border border-zinc-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900">
+  <div class="px-5 py-3 bg-zinc-50 dark:bg-slate-800/50 border-b border-zinc-200/60 dark:border-slate-700/60">
+    <h4 class="text-sm font-semibold text-zinc-800 dark:text-slate-200">{title}</h4>
+  </div>
+  <div class="p-5">
+    <div class="flex items-start gap-0 overflow-x-auto">
+      {items.map((item, i) => (
+        <>
+          <div class="flex flex-col items-center gap-2 shrink-0 min-w-[80px]">
+            <span class="w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 flex items-center justify-center text-sm font-bold">
+              {item.step}
+            </span>
+            <span class="text-xs text-center text-zinc-600 dark:text-slate-400 leading-snug max-w-[90px]">
+              {item.label}
+            </span>
+          </div>
+          {i < items.length - 1 && (
+            <div class="flex items-center pt-4 shrink-0 w-8">
+              <div class="h-px w-full bg-zinc-300 dark:bg-slate-600" />
+            </div>
+          )}
+        </>
+      ))}
+    </div>
+  </div>
+</div>

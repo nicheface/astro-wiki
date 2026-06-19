@@ -231,7 +231,9 @@ astro-wiki/
 │   │   ├── TagFilterWrapper.astro   # 标签筛选包装 (client:load)
 │   │   ├── ArticleTag.tsx           # 文章内标签 + 关联笔记弹窗
 │   │   ├── ArticleTagWrapper.astro  # 文章内标签包装 (client:load)
-│   │   └── SmartImageCard.astro    # 图片卡片（纯 Astro，无需包装）
+│   │   ├── SmartImageCard.astro    # 图片卡片（纯 Astro，无需包装）
+│   │   ├── SwotCard.astro           # SWOT/对比分析卡片（纯 Astro）
+│   │   └── StepFlow.astro           # 步骤流程可视化（纯 Astro）
 │   ├── data/
 │   │   ├── articles.ts              # 文章注册表（统一数据源）
 │   │   └── tags.ts                  # 三级标签层级体系
