@@ -75,6 +75,10 @@ const { title = "Digital Garden", description = "", currentHref } = Astro.props;
 
         <!-- Center: Main Content -->
         <main class="flex-1 min-w-0 max-w-3xl">
+          <!-- Inline search bar -->
+          <div class="not-prose mb-10">
+            <SearchBox variant="inline" />
+          </div>
           <article class="prose">
             <slot />
           </article>

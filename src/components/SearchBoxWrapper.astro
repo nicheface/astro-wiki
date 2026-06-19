@@ -1,6 +1,10 @@
 ---
 // ===== SearchBoxWrapper.astro =====
 import SearchBox from "./SearchBox.tsx";
+export interface Props {
+  variant?: "button" | "inline";
+}
+const { variant = "button" } = Astro.props;
 ---
 
-<SearchBox client:load />
+<SearchBox client:load variant={variant} />
