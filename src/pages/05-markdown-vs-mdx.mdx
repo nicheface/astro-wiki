@@ -97,7 +97,8 @@ import SwotCard from "../components/SwotCard.astro";
 
 <SwotCard
   title="使用 MDX 写技术内容"
-  itemsJson='[{"label":"Strengths","children":[{"label":"复用组件","desc":"图表、卡片、流程块一次开发，多篇复用"},{"label":"表达力强","desc":"一篇文章可同时包含文档与交互"}]},{"label":"Weaknesses","children":[{"label":"复杂度上升","desc":"构建链路与运行时依赖更重"},{"label":"编辑门槛提高","desc":"作者需要理解 JSX 基础"}]}]'
+  strengths='[{"label":"复用组件","desc":"图表、卡片、流程块一次开发，多篇复用"},{"label":"表达力强","desc":"一篇文章可同时包含文档与交互"}]'
+  weaknesses='[{"label":"复杂度上升","desc":"构建链路与运行时依赖更重"},{"label":"编辑门槛提高","desc":"作者需要理解 JSX 基础"}]'
 />
 ```
 
@@ -105,7 +106,8 @@ import SwotCard from "../components/SwotCard.astro";
 
 <SwotCard
   title="使用 MDX 写技术内容"
-  itemsJson='[{"label":"Strengths","children":[{"label":"复用组件","desc":"图表、卡片、流程块一次开发，多篇复用"},{"label":"表达力强","desc":"一篇文章可同时包含文档与交互"}]},{"label":"Weaknesses","children":[{"label":"复杂度上升","desc":"构建链路与运行时依赖更重"},{"label":"编辑门槛提高","desc":"作者需要理解 JSX 基础"}]}]'
+  strengths='[{"label":"复用组件","desc":"图表、卡片、流程块一次开发，多篇复用"},{"label":"表达力强","desc":"一篇文章可同时包含文档与交互"}]'
+  weaknesses='[{"label":"复杂度上升","desc":"构建链路与运行时依赖更重"},{"label":"编辑门槛提高","desc":"作者需要理解 JSX 基础"}]'
 />
 
 > **Markdown 只能表达"内容本身"；MDX 可以把"展示组件"纳入内容系统。**`SwotCard` 定义一次，全站所有分析类文章统一视觉——这就是 <HoverDetail term="组件复用" href="https://react.dev/learn/thinking-in-react">组件复用的本质：定义一次样式和结构，之后每次只需要传入数据。10 篇 SWOT 文章 = 1 处样式维护点，而不是 10 处手写排版。</HoverDetail> 的价值。
