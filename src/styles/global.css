@@ -74,3 +74,32 @@ body {
 .prose hr {
   @apply border-zinc-200 my-12;
 }
+
+/* ===== Table Styling (Apple-inspired) ===== */
+.prose table {
+  @apply w-full text-sm border-collapse my-8;
+}
+
+.prose thead {
+  @apply border-b-2 border-zinc-200;
+}
+
+.prose th {
+  @apply text-left text-xs font-semibold text-zinc-500 uppercase tracking-wider px-4 py-3;
+}
+
+.prose td {
+  @apply px-4 py-3 text-zinc-700 border-b border-zinc-100;
+}
+
+.prose tbody tr {
+  @apply transition-colors duration-150;
+}
+
+.prose tbody tr:hover {
+  @apply bg-zinc-50/50;
+}
+
+.prose tbody tr:last-child td {
+  @apply border-b-0;
+}

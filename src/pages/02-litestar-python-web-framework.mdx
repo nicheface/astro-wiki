@@ -7,7 +7,6 @@ tags: [python, web, 框架, ASGI, 异步, 高性能, API]
 
 import DataChart from "../components/DataChartWrapper.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
-import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
 
 {/* ===== 标签栏 ===== */}
 <div class="not-prose mb-8 flex flex-wrap gap-2">
@@ -103,43 +102,16 @@ Litestar 的一大优势是**电池含量高**——以下是框架直接内置�
 
 ### Hello World
 
-<LiveCodeBlock
-  title="最简 Litestar 应用"
-  previewHeight={260}
-  code={`<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-<meta charset="UTF-8">
-<style>
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body {
-    display: flex; align-items: center; justify-content: center;
-    min-height: 100vh; font-family: system-ui, sans-serif; background: #fafafa;
-  }
-  pre {
-    background: #1c1c1e; color: #86efac; padding: 24px 32px;
-    border-radius: 12px; font-size: 15px; line-height: 1.8;
-    font-family: 'SF Mono', 'JetBrains Mono', monospace;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.06);
-  }
-  .kw { color: #c084fc; } .fn { color: #60a5fa; } .str { color: #f9a8d4; }
-  .cm { color: #6b7280; }
-</style>
-</head>
-<body>
-<pre><span class="kw">from</span> litestar <span class="kw">import</span> Litestar, get
+```python
+from litestar import Litestar, get
 
-<span class="cm"># 路由定义</span>
-<span class="fn">@get</span>(<span class="str">"/"</span>)
-<span class="kw">async def</span> <span class="fn">hello_world</span>() -> <span class="kw">dict</span>[<span class="kw">str</span>, <span class="kw">str</span>]:
-    <span class="kw">return</span> {<span class="str">"hello"</span>: <span class="str">"world"</span>}
+@get("/")
+async def hello_world() -> dict[str, str]:
+    """Keeping the tradition alive with hello world."""
+    return {"hello": "world"}
 
-<span class="cm"># 应用实例</span>
 app = Litestar(route_handlers=[hello_world])
-</pre>
-</body>
-</html>`}
-/>
+```
 
 ### 带数据验证的完整示例
 

@@ -1,5 +1,26 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import TagFilter from "../components/TagFilterWrapper.astro";
+
+// Article registry — add new entries here
+const articles = [
+  {
+    href: "/astro-wiki/02-litestar-python-web-framework",
+    title: "Litestar：高性能 ASGI Python Web 框架",
+    description:
+      "异步优先、Rust 加速的 Python ASGI 框架——msgspec 序列化 + SQLAlchemy 深度集成，基准测试全面优于 FastAPI。",
+    date: "2026-06-20",
+    tags: ["python", "web", "框架", "ASGI", "异步", "高性能", "API"],
+  },
+  {
+    href: "/astro-wiki/01-future-of-knowledge",
+    title: "知识的未来：从超链接到超级组件",
+    description:
+      "探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。",
+    date: "2026-06-20",
+    tags: ["知识管理", "MDX", "组件化", "数字花园", "Astro", "React"],
+  },
+];
 ---
 
 <Layout
@@ -21,54 +42,12 @@ import Layout from "../layouts/Layout.astro";
     </div>
   </header>
 
-  <!-- Articles List -->
+  <!-- Articles with Tag Filter -->
   <section class="not-prose">
     <h2 class="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
       最新笔记
     </h2>
-    <div class="space-y-6">
-      <a
-        href="/astro-wiki/02-litestar-python-web-framework"
-        class="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="space-y-2">
-            <div class="flex items-center gap-2 mb-1">
-              <span class="text-xs font-medium text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">python</span>
-              <span class="text-xs font-medium text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">web</span>
-              <span class="text-xs font-medium text-zinc-400 bg-zinc-100 px-2 py-0.5 rounded">框架</span>
-            </div>
-            <h3 class="text-xl font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">
-              Litestar：高性能 ASGI Python Web 框架
-            </h3>
-            <p class="text-zinc-500 leading-relaxed">
-              异步优先、Rust 加速的 Python ASGI 框架——msgspec 序列化 + SQLAlchemy 深度集成，基准测试全面优于 FastAPI。
-            </p>
-          </div>
-          <time class="shrink-0 text-sm text-zinc-400 mt-1" datetime="2026-06-20">
-            2026.06.20
-          </time>
-        </div>
-      </a>
 
-      <a
-        href="/astro-wiki/01-future-of-knowledge"
-        class="block group p-6 rounded-2xl transition-all duration-300 ease-out hover:bg-zinc-50 hover:shadow-[0_8px_30px_rgb(0,0,0,0.04)]"
-      >
-        <div class="flex items-start justify-between gap-4">
-          <div class="space-y-2">
-            <h3 class="text-xl font-semibold text-zinc-900 group-hover:text-blue-600 transition-colors duration-300">
-              知识的未来：从超链接到超级组件
-            </h3>
-            <p class="text-zinc-500 leading-relaxed">
-              探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。
-            </p>
-          </div>
-          <time class="shrink-0 text-sm text-zinc-400 mt-1" datetime="2026-06-20">
-            2026.06.20
-          </time>
-        </div>
-      </a>
-    </div>
+    <TagFilter articles={articles} />
   </section>
 </Layout>

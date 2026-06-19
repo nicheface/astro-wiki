@@ -1,0 +1,9 @@
+---
+// ===== TagFilterWrapper.astro =====
+import TagFilter from "./TagFilter.tsx";
+---
+
+<TagFilter
+  client:load
+  articles={Astro.props.articles}
+/>

@@ -224,6 +224,8 @@ astro-wiki/
 │   │   ├── HoverDetailWrapper.astro
 │   │   ├── LiveCodeBlock.tsx       # 代码沙盒核心
 │   │   ├── LiveCodeBlockWrapper.astro
+│   │   ├── TagFilter.tsx            # 标签筛选核心
+│   │   └── TagFilterWrapper.astro   # 标签筛选包装 (client:load)
 │   │   └── SmartImageCard.astro    # 图片卡片（纯 Astro，无需包装）
 │   ├── layouts/
 │   │   └── Layout.astro            # 全局主布局
@@ -411,6 +413,7 @@ const { prop1, prop2 } = Astro.props;
 | 2026-06-20 | 新增 §2 MDX 写作哲学：用组件思考 | 当前 |
 | 2026-06-20 | 重构：LiveCodeBlock 从 Sandpack 替换为原生 textarea+iframe | 当前 |
 | 2026-06-20 | 新增笔记：Litestar 高性能 ASGI Python Web 框架 | 当前 |
+| 2026-06-20 | 新增：TagFilter 组件——首页标签筛选功能 | 当前 |
 | 2026-06-20 | 经验：MDX 中 JSX 组件必须与 children 同行，不可断行 | 当前 |
 
 ---
