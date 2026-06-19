@@ -104,7 +104,7 @@ function ButtonSearch() {
         <div className="fixed inset-0 z-[70] flex items-start justify-center pt-[12vh]"
           onClick={(e) => { if (e.target === e.currentTarget) setOpen(false); }}>
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-          <div className="relative w-full max-w-xl mx-4 bg-white rounded-2xl shadow-[0_20px_60px_rgb(0,0,0,0.12)] border border-zinc-200/60 overflow-hidden"
+          <div className="relative w-full max-w-xl mx-4 bg-white dark:bg-zinc-900 rounded-2xl shadow-[0_20px_60px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgb(0,0,0,0.4)] border border-zinc-200/60 dark:border-zinc-700/60 overflow-hidden"
             onClick={(e) => e.stopPropagation()}>
             <SearchInput query={query} setQuery={setQuery} loading={loading} onClose={() => setOpen(false)} inputRef={inputRef} />
             <SearchResults query={query} results={results} loading={loading} onSelect={() => setOpen(false)} />
@@ -137,7 +137,7 @@ function InlineSearch() {
 
   return (
     <div ref={containerRef} className="relative">
-      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-50 border border-zinc-200/60 transition-all duration-200 focus-within:bg-white focus-within:border-blue-300 focus-within:shadow-[0_0_0_3px_rgb(59,130,246,0.08)]">
+      <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-700/60 transition-all duration-200 focus-within:bg-white dark:focus-within:bg-zinc-900 focus-within:border-blue-300 dark:focus-within:border-blue-500 focus-within:shadow-[0_0_0_3px_rgb(59,130,246,0.08)]">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400 shrink-0">
           <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>
         </svg>
@@ -145,12 +145,12 @@ function InlineSearch() {
           onChange={(e) => setQuery(e.target.value)}
           onFocus={() => setFocused(true)}
           placeholder="搜索所有笔记..."
-          className="flex-1 text-sm text-zinc-900 placeholder-zinc-400 outline-none bg-transparent" />
+          className="flex-1 text-sm text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 outline-none bg-transparent" />
         {loading && <span className="w-3.5 h-3.5 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin shrink-0" />}
       </div>
 
       {focused && query.trim() && (
-        <div className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-white border border-zinc-200/60 shadow-[0_12px_40px_rgb(0,0,0,0.08)] overflow-hidden z-50">
+          <div className="absolute top-full left-0 right-0 mt-2 rounded-xl bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-700/60 shadow-[0_12px_40px_rgb(0,0,0,0.08)] dark:shadow-[0_12px_40px_rgb(0,0,0,0.3)] overflow-hidden z-50">
           <SearchResults query={query} results={results} loading={loading} onSelect={() => setFocused(false)} />
         </div>
       )}
@@ -164,12 +164,12 @@ function SearchInput({ query, setQuery, loading, onClose, inputRef }: {
   onClose: () => void; inputRef: React.RefObject<HTMLInputElement | null>;
 }) {
   return (
-    <div className="flex items-center gap-3 px-5 py-4 border-b border-zinc-100">
-      <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400 shrink-0">
+            <div className="flex items-center gap-3 px-5 py-4 border-b border-zinc-100 dark:border-zinc-800">
+              <svg width="18" height="18" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" className="text-zinc-400 dark:text-zinc-500 shrink-0">
         <circle cx="7" cy="7" r="4.5"/><path d="M10.5 10.5L14 14"/>
       </svg>
       <input ref={inputRef} type="text" value={query} onChange={(e) => setQuery(e.target.value)}
-        placeholder="搜索笔记..." className="flex-1 text-base text-zinc-900 placeholder-zinc-400 outline-none bg-transparent" />
+                placeholder="搜索笔记..." className="flex-1 text-base text-zinc-900 dark:text-zinc-100 placeholder-zinc-400 dark:placeholder-zinc-500 outline-none bg-transparent" />
       {loading && <span className="w-4 h-4 border-2 border-zinc-300 border-t-zinc-600 rounded-full animate-spin shrink-0" />}
       <button onClick={onClose} className="text-zinc-400 hover:text-zinc-600 shrink-0">
         <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5"><path d="M4 4l8 8M12 4l-8 8"/></svg>
@@ -185,14 +185,14 @@ function SearchResults({ query, results, loading, onSelect }: {
   if (!query.trim()) return null;
   if (loading && results.length === 0) return null;
   if (results.length === 0) {
-    return <div className="px-5 py-12 text-center text-sm text-zinc-400">未找到相关笔记</div>;
+    return <div className="px-5 py-12 text-center text-sm text-zinc-400 dark:text-zinc-500">未找到相关笔记</div>;
   }
   return (
     <div className="py-2 max-h-[50vh] overflow-y-auto">
       {results.map((r) => (
         <a key={r.url} href={r.url} onClick={onSelect}
-          className="block px-5 py-3 hover:bg-zinc-50 transition-colors duration-150">
-          <p className="text-sm font-medium text-zinc-900 line-clamp-1">{r.title}</p>
+          className="block px-5 py-3 hover:bg-zinc-50 dark:hover:bg-zinc-800/50 transition-colors duration-150">
+          <p className="text-sm font-medium text-zinc-900 dark:text-zinc-100 line-clamp-1">{r.title}</p>
           {r.excerpt && (
             <p className="text-xs text-zinc-500 mt-0.5 line-clamp-2"
               dangerouslySetInnerHTML={{ __html: r.excerpt }} />
