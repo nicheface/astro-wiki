@@ -1,0 +1,13 @@
+---
+// ===== HoverDetailWrapper.astro =====
+// Wraps HoverDetail React component with client:load for interactivity in MDX
+import HoverDetail from "./HoverDetail.tsx";
+---
+
+<HoverDetail
+  client:load
+  term={Astro.props.term}
+  href={Astro.props.href}
+>
+  <slot />
+</HoverDetail>

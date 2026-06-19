@@ -96,7 +96,7 @@ git push origin main
 在 MDX 中嵌入可视化图表：
 
 ```mdx
-import DataChart from "../components/DataChart.tsx";
+import DataChart from "../components/DataChartWrapper.astro";
 
 <DataChart
   data={[
@@ -134,7 +134,7 @@ import SmartImageCard from "../components/SmartImageCard.astro";
 在文章内嵌即时术语解释：
 
 ```mdx
-import HoverDetail from "../components/HoverDetail.tsx";
+import HoverDetail from "../components/HoverDetailWrapper.astro";
 
 知识管理的未来趋势是
 <HoverDetail term="数字花园" href="https://en.wikipedia.org/wiki/Digital_garden">
@@ -149,7 +149,7 @@ import HoverDetail from "../components/HoverDetail.tsx";
 在笔记中嵌入一个可运行、可编辑的代码演示：
 
 ```mdx
-import LiveCodeBlock from "../components/LiveCodeBlock.tsx";
+import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
 
 <LiveCodeBlock
   title="演示：一个交互式例子"
@@ -174,10 +174,13 @@ astro-wiki/
 ├── public/                         # 静态资源 (favicon, etc.)
 ├── src/
 │   ├── components/
-│   │   ├── DataChart.tsx            # 数据图表组件
+│   │   ├── DataChart.tsx            # 数据图表核心
+│   │   ├── DataChartWrapper.astro    # 图表 Astro 包装 (client:load)
 │   │   ├── SmartImageCard.astro     # AI 智能卡片
-│   │   ├── HoverDetail.tsx          # 沉浸式词条悬浮
-│   │   └── LiveCodeBlock.tsx        # 可编辑代码沙盒
+│   │   ├── HoverDetail.tsx          # 悬浮词条核心
+│   │   ├── HoverDetailWrapper.astro # 悬浮 Astro 包装 (client:load)
+│   │   ├── LiveCodeBlock.tsx        # 代码沙盒核心
+│   │   └── LiveCodeBlockWrapper.astro  # 沙盒 Astro 包装 (client:load)
 │   ├── layouts/
 │   │   └── Layout.astro            # 主布局（毛玻璃导航）
 │   ├── pages/

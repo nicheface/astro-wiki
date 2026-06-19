@@ -1,0 +1,13 @@
+---
+// ===== LiveCodeBlockWrapper.astro =====
+// Wraps LiveCodeBlock React component with client:load for interactivity in MDX
+import LiveCodeBlock from "./LiveCodeBlock.tsx";
+---
+
+<LiveCodeBlock
+  client:load
+  code={Astro.props.code}
+  template={Astro.props.template}
+  title={Astro.props.title}
+  previewHeight={Astro.props.previewHeight}
+/>

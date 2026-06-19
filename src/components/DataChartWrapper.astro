@@ -1,0 +1,16 @@
+---
+// ===== DataChartWrapper.astro =====
+// Wraps DataChart React component with client:load for interactivity in MDX
+import DataChart from "./DataChart.tsx";
+---
+
+<DataChart
+  client:load
+  data={Astro.props.data}
+  type={Astro.props.type}
+  dataKey={Astro.props.dataKey}
+  xKey={Astro.props.xKey}
+  color={Astro.props.color}
+  title={Astro.props.title}
+  height={Astro.props.height}
+/>
