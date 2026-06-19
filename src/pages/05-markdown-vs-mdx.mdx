@@ -1,0 +1,119 @@
+---
+layout: ../layouts/ArticleLayout.astro
+title: "Markdown vs MDX：什么时候该用哪个？"
+description: "一篇实战对比——MDX 不是更高级的 Markdown，而是让内容成为应用的一部分。附带四条决策原则和具体场景对照。"
+currentHref: "/astro-wiki/05-markdown-vs-mdx"
+tags: [thinking, methodology, mdx, component]
+---
+
+import HoverDetail from "../components/HoverDetailWrapper.astro";
+import ArticleTag from "../components/ArticleTagWrapper.astro";
+
+{/* ===== 标签栏 ===== */}
+<div class="not-prose mb-8 flex flex-wrap gap-2">
+<ArticleTag tagKey="thinking" /> <ArticleTag tagKey="methodology" /> <ArticleTag tagKey="mdx" /> <ArticleTag tagKey="component" />
+</div>
+
+{/* ===== 开篇 ===== */}
+<div class="not-prose mb-16">
+  <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 dark:text-slate-100 leading-tight">
+    Markdown vs MDX
+    <span class="block text-xl font-normal text-zinc-400 dark:text-slate-500 mt-2">什么时候该用哪个？</span>
+  </h1>
+  <div class="flex items-center gap-4 mt-6">
+    <time class="text-sm text-zinc-400 dark:text-slate-500" datetime="2026-06-20">2026 年 6 月 20 日</time>
+    <span class="text-zinc-200 dark:text-slate-700">·</span>
+    <span class="text-sm text-zinc-400 dark:text-slate-500">原文：ssvex.com</span>
+  </div>
+</div>
+
+## 一句话结论
+
+> **纯文字、图片、代码块、表格 → Markdown。需要可复用组件、可视化、数据驱动渲染 → MDX。**
+
+MDX 不是"更高级"的 Markdown——它只是让内容成为应用的一部分。选 MDX 的唯一理由，是组件复用和动态表达真正带来了收益，而不是为了显得"技术先进"。
+
+---
+
+## 四个场景对比
+
+### 场景一：普通技术文章段落
+
+如果只是写一段介绍性文字——没有交互、没有组件、没有动态数据——**Markdown 是最安全的选择**。两者表达完全一致的内容，MDX 没有带来任何额外价值。
+
+```
+Markdown 与 MDX 都能表达同样的纯文本段落。
+没有交互需求时，用 Markdown，减少编译复杂度。
+```
+
+### 场景二：Pros/Cons 分析卡片
+
+当你需要展示**结构化对比信息**（优劣分析、SWOT、对比表）时：
+
+- **Markdown** 只能表达内容本身——两个列表，读者自行消化
+- **MDX** 可以封装一个 `<SWOTCard>` 组件，传入参数后自动渲染为统一的视觉风格
+
+<HoverDetail term="SWOT 卡片" href="https://en.wikipedia.org/wiki/SWOT_analysis">SWOT（Strengths, Weaknesses, Opportunities, Threats）是一种战略分析框架，常用于商业决策。MDX 中可以将 SWOT 分析封装为可复用组件，保证每次展示的视觉一致性。</HoverDetail> 的优势不在内容，而在**可复用性**——团队每写一次分析，不用重新手写排版。
+
+### 场景三：流程/工作流展示
+
+- **Markdown** → 静态编号列表，信息密度低
+- **MDX** → 用 `<sequence-steps>` 组件渲染为结构化可视化图表
+
+同样的步骤内容，MDX 版本的**信息密度**和**可读性**远超 Markdown。这就是 Digital Garden 的核心价值——**用组件提升知识的表达力**。
+
+### 场景四：数据驱动渲染
+
+当内容依赖于某组数据时（教程步骤、参数矩阵、变更日志）：
+
+- **Markdown** → 必须逐条手动编写，修改时一行行改
+- **MDX** → 对数组执行 `map()`，自动生成列表
+
+```mdx
+{steps.map((s, i) => (
+  <StepCard key={i} number={i + 1} title={s.title} detail={s.detail} />
+))}
+```
+
+数据变，内容自动变——没有人工维护成本。
+
+---
+
+## 决策框架
+
+| 场景 | 推荐 |
+|------|------|
+| 个人博客、日常笔记、README | **Markdown** |
+| 文档站点需要统一的卡片/提示/流程图组件 | **MDX** |
+| 交互式教程、数据可视化、动态渲染 | **MDX**（必须） |
+| 多作者协作，作者不熟悉 JSX | **Markdown**（更安全） |
+
+### 终极判断
+
+| 内容感觉像... | 用什么 |
+|--------------|--------|
+| **一篇文章** | Markdown |
+| **产品界面的一部分** | MDX |
+| **需要可复用的结构化表达** | MDX |
+
+---
+
+## 对 Digital Garden 的意义
+
+这篇对比恰好说明了 Digital Garden 选择 MDX 的原因：
+
+1. **知识不只是文字**——对比表、流程图、数据图表都需要组件承载
+2. **复用 > 重复**——每次写 SWOT 分析不必重新排版，用同一个 `<SWOTCard>` 组件
+3. **动态 > 静态**——教程步骤、变更日志应该数据驱动，而非手动逐条维护
+4. **克制使用 MDX**——不是每段文字都需要组件。当组件带来的表达力提升不明显时，**纯 Markdown 更清爽**
+
+> 📖 **来源**：[Markdown vs MDX: When to Use Which — ssvex.com](https://www.ssvex.com/posts/markdown-vs-mdx-when-to-use-which/)
+
+---
+
+<div class="not-prose mt-16 p-6 rounded-2xl bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800">
+  <p class="text-sm text-zinc-500 dark:text-slate-400 leading-relaxed">
+    <strong class="text-zinc-700 dark:text-slate-300">📋 相关文档</strong><br/>
+    本文的核心原则已沉淀为 <a href="https://github.com/nicheface/astro-wiki/blob/main/NOTE_WRITING_GUIDE.md" class="text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300">NOTE_WRITING_GUIDE.md</a>——AI 撰写笔记时的强制参考文件。
+  </p>
+</div>

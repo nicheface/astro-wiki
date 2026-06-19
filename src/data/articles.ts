@@ -12,6 +12,14 @@ export interface ArticleMeta {
 
 export const articles: ArticleMeta[] = [
   {
+    href: "/astro-wiki/05-markdown-vs-mdx",
+    title: "Markdown vs MDX：什么时候该用哪个？",
+    description:
+      "一篇实战对比——MDX 不是更高级的 Markdown，而是让内容成为应用的一部分。附带四条决策原则和具体场景对照。",
+    date: "2026-06-20",
+    tags: ["thinking", "methodology", "mdx", "component"],
+  },
+  {
     href: "/astro-wiki/04-source-flow-system",
     title: "源流系统 —— 问题解决工作表",
     description:
