@@ -1,13 +1,13 @@
 ---
-// ===== SwotCard.astro — Side-by-side Strengths / Weaknesses cards =====
+// ===== SwotCard.astro — Side-by-side Strengths / Weaknesses card =====
 // Usage in MDX:
 //   <SwotCard title="使用 MDX 写技术内容"
 //     strengths='[{"label":"复用组件","desc":"图表、卡片、流程块一次开发，多篇复用"},...]'
 //     weaknesses='[{"label":"复杂度上升","desc":"构建链路与运行时依赖更重"},...]' />
 export interface Props {
   title: string;
-  strengths: string;  // JSON: { label: string; desc: string }[]
-  weaknesses: string; // JSON: { label: string; desc: string }[]
+  strengths: string;
+  weaknesses: string;
 }
 
 const { title, strengths, weaknesses } = Astro.props;
@@ -15,36 +15,39 @@ const sItems = JSON.parse(strengths) as { label: string; desc: string }[];
 const wItems = JSON.parse(weaknesses) as { label: string; desc: string }[];
 ---
 
-<div class="not-prose my-8">
-  {title && (
-    <h4 class="text-sm font-semibold text-zinc-800 dark:text-slate-200 mb-4">{title}</h4>
-  )}
-  <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
-    {/* Strengths Column */}
-    <div class="rounded-2xl p-5 relative overflow-hidden" style="background: #f0fdf4;">
-      <div class="dark:hidden absolute top-3 right-4 text-[80px] font-bold leading-none select-none" style="color: #bbf7d0;">S</div>
-      <div class="hidden dark:block absolute top-3 right-4 text-[80px] font-bold leading-none select-none" style="color: #064e3b20;">S</div>
+<div class="not-prose my-8 rounded-2xl border border-zinc-200/60 dark:border-slate-700/60 overflow-hidden bg-white dark:bg-slate-900">
+  {/* Title — centered, full width */}
+  <div class="px-5 py-3 bg-zinc-50 dark:bg-slate-800/50 border-b border-zinc-200/60 dark:border-slate-700/60 text-center">
+    <h4 class="text-sm font-semibold text-zinc-800 dark:text-slate-200">{title}</h4>
+  </div>
+
+  {/* Side-by-side columns */}
+  <div class="grid grid-cols-1 sm:grid-cols-2">
+    {/* Strengths */}
+    <div class="p-5 relative overflow-hidden" style="background: #f0fdf4;">
+      <div class="dark:hidden absolute top-2 right-3 text-[72px] font-bold leading-none select-none" style="color: #bbf7d0;">S</div>
+      <div class="hidden dark:block absolute top-2 right-3 text-[72px] font-bold leading-none select-none" style="color: #064e3b20;">S</div>
       <h5 class="relative text-base font-bold text-green-900 dark:text-green-300 mb-3 pb-3 border-b border-green-200 dark:border-green-800/50">Strengths</h5>
       <div class="relative space-y-4">
         {sItems.map((item) => (
           <div>
             <p class="text-sm font-semibold text-green-900 dark:text-green-200">{item.label}</p>
-            <p class="text-xs text-green-700/70 dark:text-green-400/50 mt-0.5 leading-relaxed">{item.desc}</p>
+            <p class="text-xs text-green-700/70 dark:text-green-400/50 mt-0.5 leading-relaxed ml-4">{item.desc}</p>
           </div>
         ))}
       </div>
     </div>
 
-    {/* Weaknesses Column */}
-    <div class="rounded-2xl p-5 relative overflow-hidden" style="background: #fef2f2;">
-      <div class="dark:hidden absolute top-3 right-4 text-[80px] font-bold leading-none select-none" style="color: #fecaca;">W</div>
-      <div class="hidden dark:block absolute top-3 right-4 text-[80px] font-bold leading-none select-none" style="color: #7f1d1d20;">W</div>
+    {/* Weaknesses */}
+    <div class="p-5 relative overflow-hidden" style="background: #fef2f2;">
+      <div class="dark:hidden absolute top-2 right-3 text-[72px] font-bold leading-none select-none" style="color: #fecaca;">W</div>
+      <div class="hidden dark:block absolute top-2 right-3 text-[72px] font-bold leading-none select-none" style="color: #7f1d1d20;">W</div>
       <h5 class="relative text-base font-bold text-red-900 dark:text-red-300 mb-3 pb-3 border-b border-red-200 dark:border-red-800/50">Weaknesses</h5>
       <div class="relative space-y-4">
         {wItems.map((item) => (
           <div>
             <p class="text-sm font-semibold text-red-900 dark:text-red-200">{item.label}</p>
-            <p class="text-xs text-red-700/70 dark:text-red-400/50 mt-0.5 leading-relaxed">{item.desc}</p>
+            <p class="text-xs text-red-700/70 dark:text-red-400/50 mt-0.5 leading-relaxed ml-4">{item.desc}</p>
           </div>
         ))}
       </div>
