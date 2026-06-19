@@ -115,10 +115,19 @@ export default function TagFilter({ articles }: TagFilterProps) {
 
   const clearAll = () => setSelected(new Set());
 
-  // Data for rows
-  const l1tags = getTopLevel();
-  const l2tags = ALL_TAGS.filter((t) => t.level === 2);
-  const l3tags = ALL_TAGS.filter((t) => t.level === 3 && tagCounts.has(t.key));
+  // Unified data: only show tags that have articles
+  const visibleL1 = useMemo(
+    () => getTopLevel().filter((t) => (tagCounts.get(t.key) ?? 0) > 0),
+    [tagCounts]
+  );
+  const visibleL2 = useMemo(
+    () => ALL_TAGS.filter((t) => t.level === 2 && (tagCounts.get(t.key) ?? 0) > 0),
+    [tagCounts]
+  );
+  const visibleL3 = useMemo(
+    () => ALL_TAGS.filter((t) => t.level === 3 && (tagCounts.get(t.key) ?? 0) > 0),
+    [tagCounts]
+  );
 
   return (
     <div>
@@ -159,7 +168,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
         {/* Row 1: Level 1 */}
         <div className="flex items-start gap-1.5 mb-2 flex-wrap">
           <span className="text-[10px] text-zinc-400 shrink-0 mt-1.5 w-6">一级</span>
-          {l1tags.map((t) => (
+          {visibleL1.map((t) => (
             <SmallPill
               key={t.key}
               tag={t}
@@ -173,7 +182,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
         {/* Row 2: Level 2 */}
         <div className="flex items-start gap-1.5 mb-2 flex-wrap">
           <span className="text-[10px] text-zinc-400 shrink-0 mt-1.5 w-6">二级</span>
-          {l2tags.map((t) => (
+          {visibleL2.map((t) => (
             <SmallPill
               key={t.key}
               tag={t}
@@ -187,8 +196,8 @@ export default function TagFilter({ articles }: TagFilterProps) {
         {/* Row 3: Level 3 */}
         <div className="flex items-start gap-1.5 flex-wrap">
           <span className="text-[10px] text-zinc-400 shrink-0 mt-1.5 w-6">三级</span>
-          {l3tags.length > 0 ? (
-            l3tags.map((t) => (
+          {visibleL3.length > 0 ? (
+            visibleL3.map((t) => (
               <SmallPill
                 key={t.key}
                 tag={t}
@@ -213,7 +222,10 @@ export default function TagFilter({ articles }: TagFilterProps) {
           <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
 
           {/* Popup card */}
-          <div className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-[0_20px_60px_rgb(0,0,0,0.12)] border border-zinc-200/60 max-h-[70vh] overflow-y-auto">
+          <div
+            className="relative w-full max-w-lg mx-4 rounded-2xl bg-white shadow-[0_20px_60px_rgb(0,0,0,0.12)] border border-zinc-200/60 max-h-[70vh] overflow-y-auto"
+            onClick={(e) => e.stopPropagation()}
+          >
             {/* Header */}
             <div className="sticky top-0 bg-white/90 backdrop-blur-xl flex items-center justify-between px-6 py-4 border-b border-zinc-100 rounded-t-2xl z-10">
               <h3 className="text-sm font-semibold text-zinc-900">全部标签</h3>
@@ -229,8 +241,8 @@ export default function TagFilter({ articles }: TagFilterProps) {
 
             {/* Body */}
             <div className="p-6 space-y-4">
-              {getTopLevel().map((l1) => {
-                const l2Children = getL2WithChildren(l1.key);
+              {visibleL1.map((l1) => {
+                const l2Children = getL2WithChildren(l1.key).filter((t) => (tagCounts.get(t.key) ?? 0) > 0);
                 if (l2Children.length === 0) return null;
                 return (
                   <TreeNode
@@ -241,7 +253,7 @@ export default function TagFilter({ articles }: TagFilterProps) {
                     onToggle={toggle}
                   >
                     {l2Children.map((l2) => {
-                      const l3Children = getChildren(l2.key);
+                      const l3Children = getChildren(l2.key).filter((t) => (tagCounts.get(t.key) ?? 0) > 0);
                       return (
                         <TreeNode
                           key={l2.key}
