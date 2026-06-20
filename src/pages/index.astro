@@ -1,14 +1,11 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import TagFilter from "../components/TagFilterWrapper.astro";
-import { articles } from "../data/articles";
 ---
 
 <Layout
   title="Noösphere"
   description="知识库消隐之处，认知开始呼吸。"
 >
-  <!-- Hero -->
   <header class="not-prose mb-12">
     <div class="space-y-6">
       <h1 class="text-5xl sm:text-6xl font-bold tracking-tight text-zinc-900 leading-tight">
@@ -22,9 +19,4 @@ import { articles } from "../data/articles";
       </p>
     </div>
   </header>
-
-  <!-- Tag Filter + Article List -->
-  <section class="not-prose">
-    <TagFilter articles={articles} />
-  </section>
 </Layout>

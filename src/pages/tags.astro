@@ -1,0 +1,13 @@
+---
+import Layout from "../layouts/Layout.astro";
+import TagFilter from "../components/TagFilterWrapper.astro";
+import { articles } from "../data/articles";
+---
+
+<Layout title="标签" description="Noösphere 标签体系">
+  <div class="not-prose">
+    <h1 class="text-3xl font-bold tracking-tight text-zinc-900 dark:text-slate-100 mb-2">标签</h1>
+    <p class="text-sm text-zinc-500 dark:text-slate-400 mb-8">三级标签层级，点击筛选文章。</p>
+    <TagFilter articles={articles} />
+  </div>
+</Layout>
