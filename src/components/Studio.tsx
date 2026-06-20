@@ -31,9 +31,7 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   const [tab, setTab] = useState<"generate" | "qa">("qa");
 
   // ----- Article Generator state -----
-  const [genTopic, setGenTopic] = useState("");
-  const [genTags, setGenTags] = useState("");
-  const [genDesc, setGenDesc] = useState("");
+  const [genPrompt, setGenPrompt] = useState("");
   const [genOutput, setGenOutput] = useState("");
   const [genLoading, setGenLoading] = useState(false);
   const [genError, setGenError] = useState("");
@@ -59,7 +57,7 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   // ============================================================
 
   const generateArticle = async () => {
-    if (!genTopic.trim() || genLoading) return;
+    if (!genPrompt.trim() || genLoading) return;
     setGenLoading(true);
     setGenOutput("");
     setGenError("");
@@ -71,7 +69,7 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
       .map((a) => `- **${a.title}**: ${a.description}`)
       .join("\n");
 
-    const systemPrompt = `你是 Digital Garden 的 AI 作者。请根据以下写作指南和用户输入，生成一篇完整的 MDX 格式笔记。
+    const systemPrompt = `你是 Digital Garden 的 AI 作者。请根据以下写作指南和用户描述，生成一篇完整的 MDX 格式笔记。
 
 ## 写作指南
 ${writingGuide}
@@ -81,16 +79,15 @@ ${articleList}
 
 ## 重要规则
 1. 输出必须是合法的 MDX，以 --- 开头的 frontmatter 开始
-2. Frontmatter 必须包含: layout, title, description, currentHref (用 /astro-wiki/ 前缀), tags
-3. layout 必须是 "../layouts/ArticleLayout.astro"
-4. 正文中优先使用已有组件: DataChart, HoverDetail, SmartImageCard, LiveCodeBlock, SwotCard, StepFlow, ArticleTag
-5. 不要包含 import 语句
-6. 风格: 简洁、深邃、文艺，匹配数字花园的整体调性`;
+2. Frontmatter 必须包含: layout, title, description, currentHref, tags —— 全部由你根据内容自动生成
+3. currentHref 使用 "/astro-wiki/XX-slug" 格式，slug 由你从标题自动推导
+4. layout 必须是 "../layouts/ArticleLayout.astro"
+5. tags 从已有的标签层级中选择（coding/life/thinking 及其子标签），如需要也可建议新标签
+6. 正文中优先使用已有组件: DataChart, HoverDetail, SmartImageCard, LiveCodeBlock, SwotCard, StepFlow, ArticleTag
+7. 不要包含 import 语句
+8. 风格: 简洁、深邃、文艺，匹配数字花园的整体调性`;
 
-    const userPrompt = `请生成一篇新笔记。
-主题: ${genTopic}
-标签: ${genTags || "thinking"}
-简介: ${genDesc || genTopic}`;
+    const userPrompt = genPrompt;
 
     try {
       const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
@@ -369,43 +366,33 @@ ${articleContext}`;
       {/* ============================================================ */}
       {tab === "generate" && (
         <div className="space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300 mb-1">主题 *</label>
-              <input
-                type="text"
-                value={genTopic}
-                onChange={(e) => setGenTopic(e.target.value)}
-                placeholder="例如：Python web 框架对比"
-                className="w-full px-3 py-2 rounded-xl text-sm bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300 mb-1">标签</label>
-              <input
-                type="text"
-                value={genTags}
-                onChange={(e) => setGenTags(e.target.value)}
-                placeholder="例如：python, webdev, framework"
-                className="w-full px-3 py-2 rounded-xl text-sm bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
-              />
-            </div>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300 mb-1">简介</label>
-            <input
-              type="text"
-              value={genDesc}
-              onChange={(e) => setGenDesc(e.target.value)}
-              placeholder="一句话描述这篇笔记"
-              className="w-full px-3 py-2 rounded-xl text-sm bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+          <div className="space-y-3">
+            <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300">
+              描述你想写的笔记
+            </label>
+            <textarea
+              value={genPrompt}
+              onChange={(e) => setGenPrompt(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault();
+                  generateArticle();
+                }
+              }}
+              placeholder="例如：写一篇对比 Python 主流 web 框架的文章，重点推荐 Litestar"
+              rows={4}
+              disabled={genLoading}
+              className="w-full px-4 py-3 rounded-xl text-sm bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
             />
+            <p className="text-[10px] text-zinc-400 dark:text-slate-500">
+              AI 会自动生成标题、标签、简介和正文，你只需描述想法。
+            </p>
           </div>
 
           <div className="flex items-center gap-3">
             <button
               onClick={generateArticle}
-              disabled={genLoading || !genTopic.trim()}
+              disabled={genLoading || !genPrompt.trim()}
               className="px-5 py-2 rounded-xl text-sm font-medium bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-40 transition-all"
             >
               {genLoading ? "生成中..." : "✨ 生成文章"}
