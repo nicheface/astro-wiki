@@ -10,6 +10,7 @@ import { useState, useRef, useEffect } from "react";
 interface ArticleInfo {
   title: string;
   description: string;
+  href: string;
   content: string;
 }
 
@@ -63,7 +64,7 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   // ----- Q&A state -----
   const [question, setQuestion] = useState("");
   const [answer, setAnswer] = useState("");
-  const [sources, setSources] = useState<string[]>([]);
+  const [sources, setSources] = useState<{ title: string; href: string }[]>([]);
   const [qaLoading, setQaLoading] = useState(false);
   const [qaError, setQaError] = useState("");
 
@@ -73,7 +74,7 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   // Debug: log articles on mount
   useEffect(() => {
     console.log("[Studio] Loaded articles:", articles.length);
-    articles.forEach((a, i) => console.log(`  ${i + 1}. ${a.title} (${a.content.length} chars)`));
+    articles.forEach((a, i) => console.log(`  ${i + 1}. ${a.title} (${a.content.length} chars) → ${a.href}`));
   }, [articles]);
 
   // ============================================================
@@ -241,9 +242,9 @@ ${articleContext}`;
       }
 
       // Extract source article titles from answer
-      const found: string[] = [];
+      const found: { title: string; href: string }[] = [];
       for (const a of articles) {
-        if (full.includes(a.title)) found.push(a.title);
+        if (full.includes(a.title)) found.push({ title: a.title, href: a.href });
       }
       setSources(found);
     } catch (err: unknown) {
@@ -355,9 +356,13 @@ ${articleContext}`;
                   <p className="text-xs text-zinc-400 dark:text-slate-500 mb-1">参考文章:</p>
                   <div className="flex flex-wrap gap-1">
                     {sources.map((s) => (
-                      <span key={s} className="px-2 py-0.5 rounded-md text-[10px] bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400">
-                        {s}
-                      </span>
+                      <a
+                        key={s.title}
+                        href={s.href || "#"}
+                        className="px-2 py-0.5 rounded-md text-[10px] bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40 hover:underline transition-all"
+                      >
+                        {s.title}
+                      </a>
                     ))}
                   </div>
                 </div>
@@ -373,7 +378,7 @@ ${articleContext}`;
             <ul className="mt-2 space-y-1">
               {articles.map((a, i) => (
                 <li key={i}>
-                  · <strong>{a.title}</strong>
+                  · <a href={a.href || "#"} className="hover:underline hover:text-blue-600 dark:hover:text-blue-400"><strong>{a.title}</strong></a>
                   <span className="ml-1 text-zinc-300 dark:text-slate-600">({a.content.length} 字)</span>
                 </li>
               ))}

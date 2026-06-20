@@ -11,6 +11,7 @@ import { join } from "node:path";
 interface ArticleData {
   title: string;
   description: string;
+  href: string;
   content: string;
 }
 
@@ -71,6 +72,7 @@ try {
     const fm = fmMatch[1];
     const titleMatch = fm.match(/title:\s*["'](.+?)["']/);
     const descMatch = fm.match(/description:\s*["'](.+?)["']/);
+    const hrefMatch = fm.match(/currentHref:\s*["'](.+?)["']/);
 
     // Clean the body for AI
     const body = cleanMdxForAI(text);
@@ -78,6 +80,7 @@ try {
     articles.push({
       title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
       description: descMatch?.[1] || "",
+      href: hrefMatch?.[1] || "",
       content: body,
     });
   }
