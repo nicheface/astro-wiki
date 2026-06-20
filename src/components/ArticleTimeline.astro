@@ -21,7 +21,7 @@ articles.forEach((a) => {
 const years = Array.from(byYear.keys()).sort((a, b) => Number(b) - Number(a));
 ---
 
-<aside class="w-56 shrink-0 hidden lg:block">
+  <aside class="w-56 shrink-0 hidden lg:block" data-current-href={currentHref || "(none)"}>
   <div class="sticky top-20 pr-6 max-h-[calc(100vh-6rem)] overflow-y-auto">
     <h4 class="text-[10px] font-semibold uppercase tracking-widest text-zinc-400 dark:text-slate-500 mb-4">
       全部笔记
@@ -37,7 +37,7 @@ const years = Array.from(byYear.keys()).sort((a, b) => Number(b) - Number(a));
             </div>
             <ul class="space-y-0.5">
               {byYear.get(year)!.map((a) => {
-                const isActive = currentHref === a.href;
+                const isActive = currentHref?.trim() === a.href?.trim();
                 return (
                   <li>
                     <a
