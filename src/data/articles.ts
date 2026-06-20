@@ -12,6 +12,14 @@ export interface ArticleMeta {
 
 export const articles: ArticleMeta[] = [
   {
+    href: "/astro-wiki/06-probability-humility",
+    title: "概率的谦卑：一个泊松模型教我的事",
+    description:
+      "从足球比分到人生决策，同一个数学结构在运作——泊松、校准、预注册。不是关于预测未来，是关于诚实面对不确定。",
+    date: "2026-06-21",
+    tags: ["thinking", "methodology", "probability", "statistics", "decision-making"],
+  },
+  {
     href: "/astro-wiki/05-markdown-vs-mdx",
     title: "Markdown vs MDX：什么时候该用哪个？",
     description:
