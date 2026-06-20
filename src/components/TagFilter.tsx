@@ -9,7 +9,7 @@
 
 import { useState, useMemo, useCallback } from "react";
 import type { ArticleMeta } from "../data/articles";
-import { ALL_TAGS, getLabel, getTopLevel, getL2WithChildren, getChildren } from "../data/tags";
+import { ALL_TAGS, getLabel, getTopLevel } from "../data/tags";
 import type { TagDef } from "../data/tags";
 
 // ----- Types -----
@@ -47,49 +47,9 @@ function SmallPill({
   );
 }
 
-// ===== Sub: popup tree node =====
-function TreeNode({
-  tag,
-  active,
-  count,
-  children,
-  onToggle,
-}: {
-  tag: TagDef;
-  active: boolean;
-  count: number;
-  children?: React.ReactNode;
-  onToggle: (key: string) => void;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <button
-        onClick={() => onToggle(tag.key)}
-        className={`
-          inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium
-          transition-all duration-200
-          ${active
-            ? "bg-blue-600 text-white shadow-[0_2px_8px_rgb(59,130,246,0.2)]"
-            : "bg-zinc-100 dark:bg-slate-800 text-zinc-600 dark:text-slate-300 hover:bg-zinc-200 dark:hover:bg-slate-700"
-          }
-        `}
-      >
-        {tag.label}
-        {count > 0 && (
-          <span className={`text-xs ${active ? "text-blue-200" : "text-zinc-400"}`}>
-            {count}
-          </span>
-        )}
-      </button>
-      {children && <div className="ml-4 pl-3 border-l border-zinc-200/60 space-y-1.5">{children}</div>}
-    </div>
-  );
-}
-
 // ===== Main =====
 export default function TagFilter({ articles }: TagFilterProps) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [popupOpen, setPopupOpen] = useState(false);
 
   const tagCounts = useMemo(() => {
     const m = new Map<string, number>();
@@ -134,20 +94,10 @@ export default function TagFilter({ articles }: TagFilterProps) {
       {/* ============ Compact Filter Bar ============ */}
       <div className="mb-10 rounded-2xl border border-zinc-100/60 dark:border-slate-800/60 bg-white dark:bg-slate-900 p-4 sm:p-5 shadow-[0_4px_20px_rgb(0,0,0,0.02)]">
         {/* Header */}
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-xs font-semibold uppercase tracking-widest text-zinc-400">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="text-xs font-semibold uppercase tracking-widest text-zinc-400">
             标签筛选
           </h3>
-          <button
-            onClick={() => setPopupOpen(true)}
-            className="inline-flex items-center gap-1 text-xs text-zinc-400 hover:text-zinc-600 transition-colors"
-          >
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" strokeWidth="1.5">
-              <rect x="1.5" y="1.5" width="11" height="11" rx="2" />
-              <path d="M5 5h4M5 7h4M5 9h2" />
-            </svg>
-            展开
-          </button>
         </div>
 
         {/* Selected chips */}
@@ -211,80 +161,6 @@ export default function TagFilter({ articles }: TagFilterProps) {
           )}
         </div>
       </div>
-
-      {/* ============ Popup: Full Hierarchy ============ */}
-      {popupOpen && (
-        <div
-          className="fixed inset-0 z-[60] flex items-start justify-center pt-[15vh]"
-          onClick={(e) => { if (e.target === e.currentTarget) setPopupOpen(false); }}
-        >
-          {/* Backdrop */}
-          <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
-
-          {/* Popup card */}
-          <div
-            className="relative w-full max-w-lg mx-4 rounded-2xl bg-white dark:bg-slate-900 shadow-[0_20px_60px_rgb(0,0,0,0.12)] dark:shadow-[0_20px_60px_rgb(0,0,0,0.4)] border border-zinc-200/60 dark:border-slate-700/60 max-h-[70vh] overflow-y-auto"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Header */}
-            <div className="sticky top-0 bg-white/90 backdrop-blur-xl flex items-center justify-between px-6 py-4 border-b border-zinc-100 rounded-t-2xl z-10">
-              <h3 className="text-sm font-semibold text-zinc-900">全部标签</h3>
-              <button
-                onClick={() => setPopupOpen(false)}
-                className="text-zinc-400 hover:text-zinc-600 transition-colors"
-              >
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M4 4l8 8M12 4l-8 8" />
-                </svg>
-              </button>
-            </div>
-
-            {/* Body */}
-            <div className="p-6 space-y-4">
-              {visibleL1.map((l1) => {
-                const l2Children = getL2WithChildren(l1.key).filter((t) => (tagCounts.get(t.key) ?? 0) > 0);
-                if (l2Children.length === 0) return null;
-                return (
-                  <TreeNode
-                    key={l1.key}
-                    tag={l1}
-                    active={selected.has(l1.key)}
-                    count={tagCounts.get(l1.key) ?? 0}
-                    onToggle={toggle}
-                  >
-                    {l2Children.map((l2) => {
-                      const l3Children = getChildren(l2.key).filter((t) => (tagCounts.get(t.key) ?? 0) > 0);
-                      return (
-                        <TreeNode
-                          key={l2.key}
-                          tag={l2}
-                          active={selected.has(l2.key)}
-                          count={tagCounts.get(l2.key) ?? 0}
-                          onToggle={toggle}
-                        >
-                          {l3Children.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
-                              {l3Children.map((l3) => (
-                                <TreeNode
-                                  key={l3.key}
-                                  tag={l3}
-                                  active={selected.has(l3.key)}
-                                  count={tagCounts.get(l3.key) ?? 0}
-                                  onToggle={toggle}
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </TreeNode>
-                      );
-                    })}
-                  </TreeNode>
-                );
-              })}
-            </div>
-          </div>
-        </div>
-      )}
 
       {/* ============ Article List ============ */}
       <h2 className="text-xs font-semibold uppercase tracking-widest text-zinc-400 mb-8">
