@@ -3,6 +3,9 @@
  *
  * A floating AI chat companion. Minimal, glassmorphism, Apple-inspired.
  * Speaks in a terse, philosophical tone matching the Digital Garden aesthetic.
+ *
+ * USER ISOLATION: all data (API key, messages) is scoped by a profile name.
+ * Each visitor picks a profile — different profiles never share data.
  */
 "use client";
 
@@ -31,8 +34,11 @@ const DEFAULT_CONFIG: AiConfig = {
   model: "gpt-4o-mini",
 };
 
-const CONFIG_KEY = "ai_chat_config";
-const MESSAGES_KEY = "ai_chat_messages";
+// ----- Storage keys (profile-scoped) -----
+const PROFILE_KEY = "ai_chat_profile";
+const PROFILES_KEY = "ai_chat_profiles";
+function configKey(profile: string) { return `ai_chat_config_${profile}`; }
+function messagesKey(profile: string) { return `ai_chat_messages_${profile}`; }
 
 // ----- Hook: detect click outside -----
 function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () => void) {
@@ -48,31 +54,20 @@ function useClickOutside(ref: React.RefObject<HTMLElement | null>, handler: () =
 // ----- Simple Markdown → HTML -----
 function renderMarkdown(text: string): string {
   let html = text;
-  // Code blocks (```lang ... ```)
   html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_m, _lang, code) => {
     return `<pre class="bg-zinc-100 dark:bg-slate-800 rounded-lg p-3 my-2 overflow-x-auto text-xs"><code>${escapeHtml(code.trim())}</code></pre>`;
   });
-  // Inline code
   html = html.replace(/`([^`]+)`/g, "<code class=\"bg-zinc-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs font-mono\">$1</code>");
-  // Bold
   html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  // Italic
   html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  // Links
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, "<a href=\"$2\" target=\"_blank\" rel=\"noopener noreferrer\" class=\"text-blue-600 dark:text-blue-400 underline\">$1</a>");
-  // Headings
   html = html.replace(/^### (.+)$/gm, "<h4 class=\"text-sm font-semibold mt-3 mb-1\">$1</h4>");
   html = html.replace(/^## (.+)$/gm, "<h3 class=\"text-base font-semibold mt-4 mb-1\">$1</h3>");
   html = html.replace(/^# (.+)$/gm, "<h2 class=\"text-lg font-semibold mt-4 mb-2\">$1</h2>");
-  // Unordered list items
   html = html.replace(/^[-*] (.+)$/gm, "<li class=\"ml-4 list-disc\">$1</li>");
-  // Double newline → paragraph break
   html = html.replace(/\n\n/g, "</p><p class=\"mb-2\">");
-  // Single newline → <br>
   html = html.replace(/\n/g, "<br/>");
-  // Wrap
   html = `<p class="mb-2">${html}</p>`;
-  // Clean up empty paragraphs
   html = html.replace(/<p class="mb-2"><\/p>/g, "");
   return html;
 }
@@ -81,7 +76,7 @@ function escapeHtml(s: string): string {
   return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
-// ----- Sub-component: Loading dots -----
+// ----- Sub-components -----
 function LoadingDots() {
   return (
     <span className="inline-flex items-center gap-1 ml-1">
@@ -92,7 +87,6 @@ function LoadingDots() {
   );
 }
 
-// ----- Sparkle icon (SVG) -----
 function SparkleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -103,12 +97,35 @@ function SparkleIcon({ className }: { className?: string }) {
   );
 }
 
-// ----- Main Component -----
+// ===== Main Component =====
 export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatProps) {
+  // ----- Profile -----
+  const [profile, setProfile] = useState<string>(() => {
+    try {
+      return localStorage.getItem(PROFILE_KEY) || "default";
+    } catch {
+      return "default";
+    }
+  });
+
+  // Persist profile name
+  useEffect(() => {
+    localStorage.setItem(PROFILE_KEY, profile);
+    // Also add to profiles list
+    try {
+      const list = JSON.parse(localStorage.getItem(PROFILES_KEY) || "[]");
+      if (!list.includes(profile)) {
+        list.push(profile);
+        localStorage.setItem(PROFILES_KEY, JSON.stringify(list));
+      }
+    } catch {}
+  }, [profile]);
+
+  // ----- State (all scoped by profile) -----
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<Message[]>(() => {
     try {
-      const saved = localStorage.getItem(MESSAGES_KEY);
+      const saved = localStorage.getItem(messagesKey(profile));
       return saved ? JSON.parse(saved) : [];
     } catch {
       return [];
@@ -119,7 +136,7 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
   const [streamingText, setStreamingText] = useState("");
   const [config, setConfig] = useState<AiConfig>(() => {
     try {
-      const saved = localStorage.getItem(CONFIG_KEY);
+      const saved = localStorage.getItem(configKey(profile));
       return saved ? { ...DEFAULT_CONFIG, ...JSON.parse(saved) } : DEFAULT_CONFIG;
     } catch {
       return DEFAULT_CONFIG;
@@ -134,30 +151,45 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
   const inputRef = useRef<HTMLInputElement>(null);
   const abortRef = useRef<AbortController | null>(null);
 
-  // Persist messages
+  // Reload data when profile changes
   useEffect(() => {
-    localStorage.setItem(MESSAGES_KEY, JSON.stringify(messages));
-  }, [messages]);
+    try {
+      const savedCfg = localStorage.getItem(configKey(profile));
+      setConfig(savedCfg ? { ...DEFAULT_CONFIG, ...JSON.parse(savedCfg) } : DEFAULT_CONFIG);
+      const savedMsg = localStorage.getItem(messagesKey(profile));
+      setMessages(savedMsg ? JSON.parse(savedMsg) : []);
+      setShowSettings(!savedCfg || !(savedCfg.includes("apiKey") && JSON.parse(savedCfg).apiKey));
+    } catch {
+      setConfig(DEFAULT_CONFIG);
+      setMessages([]);
+      setShowSettings(true);
+    }
+  }, [profile]);
 
-  // Persist config
+  // Persist messages (scoped)
+  useEffect(() => {
+    localStorage.setItem(messagesKey(profile), JSON.stringify(messages));
+  }, [messages, profile]);
+
+  // Persist config (scoped)
   const saveConfig = useCallback((c: AiConfig) => {
     setConfig(c);
-    localStorage.setItem(CONFIG_KEY, JSON.stringify(c));
-  }, []);
+    localStorage.setItem(configKey(profile), JSON.stringify(c));
+  }, [profile]);
 
-  // Auto-scroll to bottom
+  // Auto-scroll
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, streamingText]);
 
-  // Auto-focus textarea when panel opens
+  // Auto-focus
   useEffect(() => {
     if (isOpen && !showSettings && !isLoading) {
       setTimeout(() => textareaRef.current?.focus(), 150);
     }
   }, [isOpen, showSettings, isLoading]);
 
-  // Close on Escape
+  // Esc to close
   useEffect(() => {
     if (!isOpen) return;
     function onKey(e: KeyboardEvent) {
@@ -185,7 +217,7 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
     el.style.height = Math.min(el.scrollHeight, 120) + "px";
   };
 
-  // Build system prompt
+  // System prompt
   const buildSystemPrompt = (): string => {
     const base = `你是 Digital Garden 中的思考伙伴——「默涌」。你的风格：简洁、深邃、不啰嗦，用中文回应。每次回复不超过四句话。问你想问的，而非替用户下判断。`;
     if (pageTitle) {
@@ -194,7 +226,7 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
     return `${base}\n\n用户正在 Digital Garden 的数字花园中漫游。`;
   };
 
-  // Send message
+  // ----- Send message -----
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
@@ -213,7 +245,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
     setIsLoading(true);
     setStreamingText("");
 
-    // Reset textarea height
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
     }
@@ -252,7 +283,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
         throw new Error(msg);
       }
 
-      // Stream the response
       const reader = response.body?.getReader();
       if (!reader) throw new Error("无法读取响应流");
 
@@ -274,13 +304,10 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
             const content = parsed.choices?.[0]?.delta?.content || "";
             fullContent += content;
             setStreamingText(fullContent);
-          } catch {
-            // Skip malformed SSE chunks
-          }
+          } catch {}
         }
       }
 
-      // Append assistant message
       setMessages((prev) => [...prev, { role: "assistant", content: fullContent }]);
     } catch (err: unknown) {
       if (err instanceof DOMException && err.name === "AbortError") return;
@@ -302,7 +329,7 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
 
   const clearConversation = () => {
     setMessages([]);
-    localStorage.removeItem(MESSAGES_KEY);
+    localStorage.removeItem(messagesKey(profile));
   };
 
   const stopStreaming = () => {
@@ -314,15 +341,23 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
     setStreamingText("");
   };
 
-  // Determine if dark mode is active
-  const [isDark, setIsDark] = useState(false);
-  useEffect(() => {
-    const check = () => setIsDark(document.documentElement.classList.contains("dark"));
-    check();
-    const obs = new MutationObserver(check);
-    obs.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => obs.disconnect();
-  }, []);
+  // ----- Profile switching -----
+  const switchProfile = (newProfile: string) => {
+    const trimmed = newProfile.trim();
+    if (!trimmed || trimmed === profile) return;
+    setProfile(trimmed);
+    setError("");
+    setInput("");
+    setStreamingText("");
+  };
+
+  const getProfileList = (): string[] => {
+    try {
+      return JSON.parse(localStorage.getItem(PROFILES_KEY) || "[]");
+    } catch {
+      return [];
+    }
+  };
 
   return (
     <>
@@ -376,9 +411,14 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               <span className="relative flex items-center justify-center w-7 h-7 rounded-xl bg-blue-50 dark:bg-blue-900/30">
                 <SparkleIcon className="w-3.5 h-3.5 text-blue-500 dark:text-blue-400" />
               </span>
-              <span className="text-sm font-semibold text-zinc-800 dark:text-slate-200 tracking-tight">
-                默涌
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-semibold text-zinc-800 dark:text-slate-200 tracking-tight">
+                  默涌
+                </span>
+                <span className="text-[10px] text-zinc-400 dark:text-slate-500 bg-zinc-100 dark:bg-slate-800 px-1.5 py-0.5 rounded-md font-mono">
+                  @{profile}
+                </span>
+              </div>
             </div>
             <div className="flex items-center gap-1">
               <button
@@ -419,6 +459,48 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
           {/* ----- Settings Panel ----- */}
           {showSettings && (
             <div className="px-5 py-4 space-y-3 border-b border-zinc-100 dark:border-slate-800 bg-zinc-50/50 dark:bg-slate-950/30">
+              {/* Profile switcher */}
+              <div>
+                <label className="block text-xs font-medium text-zinc-500 dark:text-slate-400 mb-1">
+                  身份 (profile)
+                </label>
+                <div className="flex gap-1.5">
+                  <input
+                    type="text"
+                    defaultValue={profile}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        switchProfile((e.target as HTMLInputElement).value);
+                      }
+                    }}
+                    onBlur={(e) => switchProfile(e.target.value)}
+                    placeholder="输入身份名称以隔离数据"
+                    className="flex-1 px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500"
+                  />
+                </div>
+                {/* Existing profiles quick-switch */}
+                {getProfileList().length > 1 && (
+                  <div className="flex flex-wrap gap-1 mt-1.5">
+                    {getProfileList().map((p) => (
+                      <button
+                        key={p}
+                        onClick={() => switchProfile(p)}
+                        className={`px-2 py-0.5 rounded-md text-[10px] font-mono transition-all ${
+                          p === profile
+                            ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                            : "bg-zinc-100 dark:bg-slate-800 text-zinc-500 dark:text-slate-400 hover:bg-zinc-200 dark:hover:bg-slate-700"
+                        }`}
+                      >
+                        @{p}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                <p className="text-[10px] text-zinc-400 dark:text-slate-500 mt-1">
+                  切换身份后，API 密钥与对话记录完全隔离。
+                </p>
+              </div>
+
               <div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-slate-400 mb-1">API 端点</label>
                 <input
@@ -468,7 +550,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
 
           {/* ----- Messages Area ----- */}
           <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 min-h-[120px]">
-            {/* Empty state */}
             {messages.length === 0 && !isLoading && (
               <div className="flex flex-col items-center justify-center py-8 text-center">
                 <div className="w-10 h-10 rounded-2xl bg-blue-50 dark:bg-blue-900/20 flex items-center justify-center mb-3">
@@ -485,7 +566,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               </div>
             )}
 
-            {/* Messages */}
             {messages.map((msg, i) => (
               <div
                 key={i}
@@ -512,7 +592,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               </div>
             ))}
 
-            {/* Streaming text */}
             {isLoading && streamingText && (
               <div className="flex justify-start">
                 <div className="max-w-[85%] px-4 py-2.5 rounded-2xl rounded-bl-md bg-zinc-100 dark:bg-slate-800 text-zinc-800 dark:text-slate-200 text-sm leading-relaxed">
@@ -525,7 +604,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               </div>
             )}
 
-            {/* Loading without text yet */}
             {isLoading && !streamingText && (
               <div className="flex justify-start">
                 <div className="px-4 py-2.5 rounded-2xl rounded-bl-md bg-zinc-100 dark:bg-slate-800 text-sm text-zinc-500 dark:text-slate-400">
@@ -534,7 +612,6 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               </div>
             )}
 
-            {/* Error */}
             {error && !showSettings && (
               <div className="flex justify-center">
                 <p className="text-xs text-red-500 dark:text-red-400 bg-red-50 dark:bg-red-900/20 px-3 py-1.5 rounded-lg">
