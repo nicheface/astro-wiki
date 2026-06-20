@@ -1,9 +1,8 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import { ALL_TAGS, getTag, getChildren } from "../data/tags";
+import { ALL_TAGS } from "../data/tags";
 import { articles } from "../data/articles";
 
-// Count articles per tag
 const tagCounts = new Map<string, number>();
 for (const a of articles) {
   for (const t of a.tags) {
@@ -19,67 +18,103 @@ const l3Tags = ALL_TAGS.filter((t) => t.level === 3 && tagCounts.has(t.key));
 <Layout title="标签" description="Noösphere 标签体系">
   <div class="not-prose">
     <h1 class="text-3xl font-bold tracking-tight text-zinc-900 dark:text-slate-100 mb-2">标签</h1>
-    <p class="text-sm text-zinc-500 dark:text-slate-400 mb-10">三级标签层级体系，点击查看关联文章。</p>
+    <p class="text-sm text-zinc-500 dark:text-slate-400 mb-10">三级标签层级体系，点击筛选文章。可多选组合。</p>
 
-    {/* Level 1 */}
-    <section class="mb-8">
-      <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">一级 · 领域</h2>
-      <div class="flex flex-wrap gap-2">
-        {l1Tags.map((t) => (
-          <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-slate-800 text-sm font-medium text-zinc-700 dark:text-slate-300 hover:bg-zinc-200 dark:hover:bg-slate-700 transition-all">
-            {t.label}
-            <span class="text-xs text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
-          </a>
-        ))}
-      </div>
-    </section>
+    <div id="tags-root" class="space-y-8">
+      <!-- Level 1 -->
+      <section>
+        <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">一级 · 领域</h2>
+        <div class="flex flex-wrap gap-2">
+          {l1Tags.map((t) => (
+            <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-zinc-100 dark:bg-slate-800 text-sm font-medium text-zinc-700 dark:text-slate-300 hover:bg-zinc-200 dark:hover:bg-slate-700 transition-all">
+              {t.label}
+              <span class="text-xs text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
+            </a>
+          ))}
+        </div>
+      </section>
 
-    {/* Level 2 */}
-    <section class="mb-8">
-      <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">二级 · 主题</h2>
-      <div class="space-y-4">
-        {l1Tags.map((l1) => {
-          const children = l2Tags.filter((t) => t.parent === l1.key);
-          if (children.length === 0) return null;
-          return (
-            <div>
-              <p class="text-xs text-zinc-400 dark:text-slate-500 mb-1.5 ml-1">{l1.label}</p>
-              <div class="flex flex-wrap gap-1.5">
-                {children.map((t) => (
-                  <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-sm text-zinc-600 dark:text-slate-400 hover:border-zinc-200 dark:hover:border-slate-700 hover:text-zinc-800 dark:hover:text-slate-200 transition-all">
-                    {t.label}
-                    <span class="text-[10px] text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
-                  </a>
-                ))}
+      <!-- Level 2 -->
+      <section>
+        <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">二级 · 主题</h2>
+        <div class="space-y-4">
+          {l1Tags.map((l1) => {
+            const children = l2Tags.filter((t) => t.parent === l1.key);
+            if (children.length === 0) return null;
+            return (
+              <div>
+                <p class="text-xs text-zinc-400 dark:text-slate-500 mb-1.5 ml-1">{l1.label}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {children.map((t) => (
+                    <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-sm text-zinc-600 dark:text-slate-400 hover:border-zinc-200 dark:hover:border-slate-700 hover:text-zinc-800 dark:hover:text-slate-200 transition-all">
+                      {t.label}
+                      <span class="text-[10px] text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+            );
+          })}
+        </div>
+      </section>
 
-    {/* Level 3 */}
-    <section class="mb-8">
-      <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">三级 · 具体</h2>
-      <div class="space-y-4">
-        {l2Tags.map((l2) => {
-          const children = l3Tags.filter((t) => t.parent === l2.key);
-          if (children.length === 0) return null;
-          return (
-            <div>
-              <p class="text-xs text-zinc-400 dark:text-slate-500 mb-1.5 ml-1">{l2.label}</p>
-              <div class="flex flex-wrap gap-1">
-                {children.map((t) => (
-                  <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-xs text-zinc-500 dark:text-slate-400 hover:border-zinc-300 dark:hover:border-slate-600 hover:text-zinc-700 dark:hover:text-slate-200 transition-all">
-                    {t.label}
-                    <span class="text-[10px] text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
-                  </a>
-                ))}
+      <!-- Level 3 -->
+      <section>
+        <h2 class="text-xs font-semibold text-zinc-400 dark:text-slate-500 uppercase tracking-widest mb-3">三级 · 具体</h2>
+        <div class="space-y-4">
+          {l2Tags.map((l2) => {
+            const children = l3Tags.filter((t) => t.parent === l2.key);
+            if (children.length === 0) return null;
+            return (
+              <div>
+                <p class="text-xs text-zinc-400 dark:text-slate-500 mb-1.5 ml-1">{l2.label}</p>
+                <div class="flex flex-wrap gap-1">
+                  {children.map((t) => (
+                    <a href={`/astro-wiki/?tag=${t.key}`} class="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-xs text-zinc-500 dark:text-slate-400 hover:border-zinc-300 dark:hover:border-slate-600 hover:text-zinc-700 dark:hover:text-slate-200 transition-all">
+                      {t.label}
+                      <span class="text-[10px] text-zinc-400 dark:text-slate-500">{tagCounts.get(t.key)}</span>
+                    </a>
+                  ))}
+                </div>
               </div>
-            </div>
-          );
-        })}
-      </div>
-    </section>
+            );
+          })}
+        </div>
+      </section>
+    </div>
   </div>
 </Layout>
+
+<script>
+  // Client-side multi-tag combination
+  const params = new URLSearchParams(window.location.search);
+  const currentTags = params.getAll("tag");
+
+  // Highlight active tags
+  document.querySelectorAll("#tags-root a").forEach((link) => {
+    const href = link.getAttribute("href") || "";
+    const tagMatch = href.match(/tag=([^&]+)/);
+    if (!tagMatch) return;
+    const tag = tagMatch[1];
+    if (currentTags.includes(tag)) {
+      link.classList.add("ring-2", "ring-blue-400/50", "border-blue-400");
+    }
+
+    // Override click to support multi-select
+    link.addEventListener("click", (e) => {
+      e.preventDefault();
+      const newParams = new URLSearchParams(window.location.search);
+      const existing = newParams.getAll("tag");
+
+      if (existing.includes(tag)) {
+        // Remove tag
+        newParams.delete("tag");
+        existing.filter((t) => t !== tag).forEach((t) => newParams.append("tag", t));
+      } else {
+        // Add tag (AND logic)
+        newParams.append("tag", tag);
+      }
+      window.location.search = newParams.toString();
+    });
+  });
+</script>
