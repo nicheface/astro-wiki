@@ -68,6 +68,8 @@ export const ALL_TAGS: TagDef[] = [
   { key: "probability", label: "概率论", level: 3, parent: "methodology" },
   { key: "statistics", label: "统计学", level: 3, parent: "methodology" },
   { key: "decision-making", label: "决策", level: 3, parent: "methodology" },
+  { key: "history", label: "历史", level: 3, parent: "methodology" },
+  { key: "philosophy", label: "哲学", level: 3, parent: "methodology" },
 
   // ---- Level 3 (under AI) ----
   { key: "agent", label: "Agent", level: 3, parent: "ai" },

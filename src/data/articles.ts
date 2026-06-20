@@ -12,6 +12,14 @@ export interface ArticleMeta {
 
 export const articles: ArticleMeta[] = [
   {
+    href: "/astro-wiki/07-teilhard-de-chardin",
+    title: "地质锤与圣杯：德日进与心智层的诞生",
+    description:
+      "一个被梵蒂冈封口的耶稣会神父，在周口店的黄土里挖出了一种全新的宇宙观——Noösphere 不是互联网，不是 AI，是演化本身觉醒了。",
+    date: "2026-06-21",
+    tags: ["thinking", "knowledge", "methodology", "history", "philosophy"],
+  },
+  {
     href: "/astro-wiki/06-probability-humility",
     title: "概率的谦卑：一个泊松模型教我的事",
     description:
