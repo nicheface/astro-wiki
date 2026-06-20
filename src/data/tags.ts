@@ -10,7 +10,7 @@
  *                      →  前端                →  Astro, React, Tailwind CSS
  *                      →  Web                 →  ASGI, API, 框架, MDX
  *   生活               →  电影
- *   思考               →  知识管理            →  数字花园
+ *   思考               →  知识管理            →  隐知
  *                      →  方法论              →  组件化
  */
 
@@ -60,7 +60,7 @@ export const ALL_TAGS: TagDef[] = [
   { key: "mdx", label: "MDX", level: 3, parent: "webdev" },
 
   // ---- Level 3 (under 知识管理) ----
-  { key: "digital-garden", label: "数字花园", level: 3, parent: "knowledge" },
+  { key: "digital-garden", label: "隐知", level: 3, parent: "knowledge" },
 
   // ---- Level 3 (under 方法论) ----
   { key: "component", label: "组件化", level: 3, parent: "methodology" },

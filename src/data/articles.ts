@@ -55,7 +55,7 @@ export const articles: ArticleMeta[] = [
     href: "/astro-wiki/01-future-of-knowledge",
     title: "知识的未来：从超链接到超级组件",
     description:
-      "探索下一代知识库的可能性——当 Markdown 遇见 React 组件，笔记不再只是文字，而是一个可交互的数字花园。",
+      "探索下一代知识介质的可能性——当 Markdown 遇见组件，笔记不再只是文字，而是一个可交互的认知拓扑。",
     date: "2026-06-20",
     tags: ["thinking", "knowledge", "digital-garden", "frontend", "astro", "react", "mdx", "component"],
   },

@@ -16,7 +16,7 @@ export interface Props {
   currentHref?: string;
 }
 
-const { title = "Digital Garden", description = "", currentHref } = Astro.props;
+const { title = "隐知", description = "", currentHref } = Astro.props;
 ---
 
 <!doctype html>
@@ -25,7 +25,7 @@ const { title = "Digital Garden", description = "", currentHref } = Astro.props;
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description || title} />
-    <title>{title} | Digital Garden</title>
+    <title>{title} | 隐知</title>
     <link rel="icon" type="image/svg+xml" href="/astro-wiki/favicon.svg" />
   </head>
   <body class="min-h-screen bg-white">
@@ -39,7 +39,7 @@ const { title = "Digital Garden", description = "", currentHref } = Astro.props;
           >
             <span class="inline-flex items-center gap-2">
               <span class="w-2 h-2 rounded-full bg-blue-500 inline-block"></span>
-              Digital Garden
+              隐知
             </span>
           </a>
           <div class="flex items-center gap-6">
@@ -103,7 +103,7 @@ const { title = "Digital Garden", description = "", currentHref } = Astro.props;
       <div class="max-w-[90rem] mx-auto px-6 sm:px-10 py-8">
         <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
           <p class="text-sm text-zinc-400 dark:text-slate-500">
-            &copy; {new Date().getFullYear()} Digital Garden &mdash; Crafted with care.
+            &copy; {new Date().getFullYear()} 隐知 &mdash; Noösphere.
           </p>
           <p class="text-xs text-zinc-300 dark:text-slate-600">
             Powered by Astro &middot; React &middot; MDX
