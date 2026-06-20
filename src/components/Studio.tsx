@@ -82,45 +82,51 @@ export default function Studio({ articlesJson, apiKey }: StudioProps) {
   }, [unlocked]);
 
   // ============================================================
-  //  Pagefind — lazy-load for pre-filtering
+  //  Local search — instant, no lazy loading (replaces Pagefind)
   // ============================================================
 
-  const pagefindRef = useRef<any>(null);
+  /** Score an article against a query using bigram overlap (works for Chinese & English) */
+  function scoreArticle(query: string, article: ArticleInfo): number {
+    const q = query.toLowerCase();
+    const title = article.title.toLowerCase();
+    const desc = article.description.toLowerCase();
+    let score = 0;
 
-  const getPagefind = useCallback(async () => {
-    if (pagefindRef.current) return pagefindRef.current;
-    try {
-      const pf = await import(/* @vite-ignore */ "/astro-wiki/pagefind/pagefind.js");
-      pagefindRef.current = pf;
-      return pf;
-    } catch {
-      return null;
-    }
-  }, []);
+    // Exact phrase matches (weighted heavily)
+    if (title.includes(q)) score += 100;
+    if (desc.includes(q)) score += 60;
 
-  /** Search Pagefind, return matched articles (by URL) */
-  const searchArticles = useCallback(async (query: string): Promise<ArticleInfo[]> => {
-    const pf = await getPagefind();
-    if (!pf) return articles; // fallback: all articles
-
-    const search = await pf.search(query);
-    if (!search?.results?.length) return articles;
-
-    const topUrls: string[] = [];
-    for (const r of search.results.slice(0, 5)) {
-      const d = await r.data();
-      // Normalize: strip trailing slash
-      topUrls.push(d.url.replace(/\/$/, ""));
+    // Word-level match (English)
+    const qWords = new Set(q.split(/[\s,，。？?！!]+/).filter((w) => w.length >= 2));
+    const textWords = (title + " " + desc).split(/[\s,，。？?！!]+/);
+    for (const w of textWords) {
+      if (qWords.has(w.toLowerCase())) score += 20;
     }
 
-    // Match Pagefind URLs to article hrefs
-    const matched = articles.filter((a) => {
-      const articleUrl = a.href.replace(/\/$/, "");
-      return topUrls.some((u) => u === articleUrl || u.endsWith(articleUrl) || articleUrl.endsWith(u));
-    });
+    // Bigram overlap (Chinese: character pairs)
+    const bigrams = new Set<string>();
+    for (let i = 0; i < q.length - 1; i++) {
+      const ch = q[i] + q[i + 1];
+      if (/[\u4e00-\u9fff]/.test(ch)) bigrams.add(ch); // Chinese chars only
+    }
+    const searchText = title + desc;
+    for (const bg of bigrams) {
+      if (searchText.includes(bg)) score += 2;
+    }
 
+    return score;
+  }
+
+  /** Return top N articles matching the query */
+  const searchArticles = useCallback((query: string, topN = 5): ArticleInfo[] => {
+    if (!query.trim()) return articles;
+    const scored = articles
+      .map((a) => ({ article: a, score: scoreArticle(query, a) }))
+      .filter((s) => s.score > 0)
+      .sort((a, b) => b.score - a.score);
+    const matched = scored.slice(0, topN).map((s) => s.article);
     return matched.length > 0 ? matched : articles;
-  }, [articles, getPagefind]);
+  }, [articles]);
 
   // ============================================================
   //  Q&A
@@ -136,9 +142,9 @@ export default function Studio({ articlesJson, apiKey }: StudioProps) {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    // Pre-filter: use Pagefind to find relevant articles
-    const relevant = await searchArticles(question.trim());
-    console.log(`[Studio] Pagefind matched ${relevant.length}/${articles.length} articles`);
+    // Pre-filter: score articles locally by keyword/bigram overlap
+    const relevant = searchArticles(question.trim());
+    console.log(`[Studio] Matched ${relevant.length}/${articles.length} articles`);
 
     const articleContext = relevant
       .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${a.content}`)
