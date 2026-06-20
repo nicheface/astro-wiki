@@ -1,7 +1,5 @@
 ---
 import Layout from "../layouts/Layout.astro";
-import TagFilter from "../components/TagFilterWrapper.astro";
-import { articles } from "../data/articles";
 ---
 
 <Layout
@@ -22,9 +20,4 @@ import { articles } from "../data/articles";
       </p>
     </div>
   </header>
-
-  <!-- Tag Filter + Article List (single interactive component) -->
-  <section class="not-prose">
-    <TagFilter articles={articles} />
-  </section>
 </Layout>
