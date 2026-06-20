@@ -150,7 +150,7 @@ export default function Studio({ articlesJson, apiKey }: StudioProps) {
       .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${a.content}`)
       .join("\n\n---\n\n");
 
-    const systemPrompt = `你是隐知知识库的问答助手。以下是知识库中${relevant.length < articles.length ? "与问题最相关的" : "所有"}文章的全文内容。请根据这些内容回答用户的问题。
+    const systemPrompt = `你是 Noösphere 知识库的问答助手。以下是知识库中${relevant.length < articles.length ? "与问题最相关的" : "所有"}文章的全文内容。请根据这些内容回答用户的问题。
 
 如果答案在文章中有明确依据，请引用文章标题。如果找不到相关信息，请诚实说明。
 
