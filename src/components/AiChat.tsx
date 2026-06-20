@@ -609,33 +609,34 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
                   输入 PIN 以解密数据。数据使用 AES-GCM 加密，仅你可知。
                 </p>
               </div>
-              <div className="w-full space-y-2">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  if (pinInput.trim()) tryUnlock(profile, pinInput.trim());
+                }}
+                className="w-full space-y-2"
+              >
                 <input
                   ref={pinInputRef}
                   type="password"
                   value={pinInput}
                   onChange={(e) => { setPinInput(e.target.value); setPinError(""); }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" && pinInput.trim()) {
-                      tryUnlock(profile, pinInput.trim());
-                    }
-                  }}
                   placeholder="PIN"
                   maxLength={64}
-                  autoComplete="off"
+                  autoComplete="current-password"
                   className="w-full px-4 py-2.5 rounded-xl text-sm text-center tracking-widest bg-zinc-50 dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-300 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
                 />
                 {pinError && (
                   <p className="text-xs text-red-500 dark:text-red-400 text-center">{pinError}</p>
                 )}
                 <button
-                  onClick={() => pinInput.trim() && tryUnlock(profile, pinInput.trim())}
+                  type="submit"
                   disabled={verifying || !pinInput.trim()}
                   className="w-full py-2 rounded-xl text-sm font-medium bg-amber-500 text-white hover:bg-amber-600 disabled:opacity-40 transition-all duration-200"
                 >
                   {verifying ? "验证中..." : "解锁"}
                 </button>
-              </div>
+              </form>
               {/* Profile switcher */}
               <div className="w-full pt-2 border-t border-zinc-100 dark:border-slate-800">
                 <p className="text-[10px] text-zinc-400 dark:text-slate-500 mb-1.5 text-center">或切换身份</p>
@@ -702,19 +703,22 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
                 <label className="block text-xs font-medium text-zinc-500 dark:text-slate-400 mb-1">
                   PIN {profileHasPIN(profile) ? "(已设置 · 可更改)" : "(首次设置)"}
                 </label>
-                <input
-                  type="password"
-                  placeholder={profileHasPIN(profile) ? "输入新 PIN 以更改" : "设置 PIN"}
-                  maxLength={64}
-                  autoComplete="off"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      const val = (e.target as HTMLInputElement).value.trim();
-                      if (val) { setNewPIN(val); (e.target as HTMLInputElement).value = ""; }
-                    }
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    const val = (e.currentTarget.elements.namedItem("settingsPin") as HTMLInputElement).value.trim();
+                    if (val) { setNewPIN(val); (e.target as HTMLFormElement).reset(); }
                   }}
-                  className="w-full px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
-                />
+                >
+                  <input
+                    name="settingsPin"
+                    type="password"
+                    placeholder={profileHasPIN(profile) ? "输入新 PIN 以更改" : "设置 PIN"}
+                    maxLength={64}
+                    autoComplete="new-password"
+                    className="w-full px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-amber-500/20 focus:border-amber-500"
+                  />
+                </form>
                 <p className="text-[10px] text-zinc-400 dark:text-slate-500 mt-1">
                   PIN 不存储。数据通过 AES-GCM 加密，仅 PIN 可解。
                 </p>
@@ -722,6 +726,28 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
 
               <div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-slate-400 mb-1">API 端点</label>
+                {/* Provider presets */}
+                <div className="flex flex-wrap gap-1 mb-1.5">
+                  {([
+                    { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini" },
+                    { label: "DeepSeek", endpoint: "https://api.deepseek.com/v1/chat/completions", model: "deepseek-chat" },
+                    { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },
+                    { label: "Anthropic", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-3-5-sonnet-20241022" },
+                  ] as const).map((p) => (
+                    <button
+                      key={p.label}
+                      type="button"
+                      onClick={() => setConfig((c) => ({ ...c, endpoint: p.endpoint, model: p.model }))}
+                      className={`px-2 py-0.5 rounded-md text-[10px] font-medium transition-all ${
+                        config.endpoint === p.endpoint
+                          ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
+                          : "bg-zinc-100 dark:bg-slate-800 text-zinc-500 dark:text-slate-400 hover:bg-zinc-200 dark:hover:bg-slate-700"
+                      }`}
+                    >
+                      {p.label}
+                    </button>
+                  ))}
+                </div>
                 <input type="url" value={config.endpoint} onChange={(e) => setConfig((c) => ({ ...c, endpoint: e.target.value }))} placeholder="https://api.openai.com/v1/chat/completions" className="w-full px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" />
               </div>
               <div>
@@ -730,7 +756,14 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
               </div>
               <div>
                 <label className="block text-xs font-medium text-zinc-500 dark:text-slate-400 mb-1">API 密钥</label>
-                <input type="password" value={config.apiKey} onChange={(e) => setConfig((c) => ({ ...c, apiKey: e.target.value }))} placeholder="sk-..." className="w-full px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" />
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    // Prevent form submission from refreshing — persist handled by save button
+                  }}
+                >
+                  <input type="password" value={config.apiKey} onChange={(e) => setConfig((c) => ({ ...c, apiKey: e.target.value }))} placeholder="sk-..." autoComplete="current-password" className="w-full px-3 py-1.5 rounded-lg text-xs bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" />
+                </form>
               </div>
               <button
                 onClick={async () => {
