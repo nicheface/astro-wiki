@@ -139,8 +139,9 @@ function drawChart(
 //  Main Component
 // ============================================================
 
-const BATCH_SIZE = 300;
-const MAX_TRIALS = 15000;
+const BATCH_SIZE = 200;
+const MAX_TRIALS = 50000;
+const TICK_MS = 40; // ~25 fps — slow enough to watch convergence
 
 export default function ProbabilityPlayground() {
   const [lambda, setLambda] = useState(2.0);
@@ -151,7 +152,7 @@ export default function ProbabilityPlayground() {
   const [convergence, setConvergence] = useState<number | null>(null); // max error %
 
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const rafRef = useRef<number>(0);
+  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const countsRef = useRef<number[]>([]);
   const trialsRef = useRef(0);
 
@@ -230,17 +231,23 @@ export default function ProbabilityPlayground() {
     }
   }, [lambda, maxK, computeConvergence]);
 
-  // Animation loop
+  // Animation loop — tick-based for controlled speed
   useEffect(() => {
-    if (!running) return;
-    const loop = () => {
+    if (!running) {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+      return;
+    }
+    runBatch(); // do first batch immediately
+    intervalRef.current = setInterval(() => {
       runBatch();
-      if (trialsRef.current < MAX_TRIALS) {
-        rafRef.current = requestAnimationFrame(loop);
+      if (trialsRef.current >= MAX_TRIALS) {
+        if (intervalRef.current) clearInterval(intervalRef.current);
+        setRunning(false);
       }
+    }, TICK_MS);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
     };
-    rafRef.current = requestAnimationFrame(loop);
-    return () => cancelAnimationFrame(rafRef.current);
   }, [running, runBatch]);
 
   const startSim = () => {
@@ -268,7 +275,9 @@ export default function ProbabilityPlayground() {
 
   // Cleanup
   useEffect(() => {
-    return () => cancelAnimationFrame(rafRef.current);
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
   }, []);
 
   const progress = Math.min(100, (trials / MAX_TRIALS) * 100);
@@ -282,7 +291,7 @@ export default function ProbabilityPlayground() {
       </h3>
       <p className="text-xs text-zinc-500 dark:text-slate-400 mt-1 mb-4 leading-relaxed">
         拖动 λ 改变理论分布，点击"蒙特卡洛模拟"看随机试验的频率如何逼近理论值——这就是<strong>大数定律</strong>的视觉证明。
-        每个批次掷 {BATCH_SIZE} 次骰子，最多运行 {MAX_TRIALS.toLocaleString()} 次。
+        每次 tick 掷 {BATCH_SIZE} 次骰子，累计 {MAX_TRIALS.toLocaleString()} 次，全程约 10 秒。
       </p>
 
       {/* Controls */}
