@@ -1,8 +1,7 @@
 ---
 // ===== Studio.astro — AI Studio (personal tool) =====
-// Build-time: reads all MDX articles + writing guide from disk.
-// Cleans JSX noise from article content before passing to AI.
-// Client-side: article generator + knowledge Q&A via DeepSeek.
+// Build-time: reads all MDX articles + project docs from disk.
+// Client-side: article generator + knowledge Q&A + note management.
 import Layout from "../layouts/Layout.astro";
 import Studio from "../components/Studio";
 import { readFileSync, readdirSync } from "node:fs";
@@ -13,6 +12,8 @@ interface ArticleData {
   description: string;
   href: string;
   content: string;
+  type: "article" | "doc";
+  filename: string;
 }
 
 /**
@@ -33,19 +34,15 @@ function cleanMdxForAI(raw: string): string {
   // Remove JSX comments {/* ... */}
   text = text.replace(/\{\/\*\s*[\s\S]*?\*\/\}/g, "");
 
-  // Remove self-closing PascalCase components: <DataChart ... />, <ArticleTag ... />
+  // Remove self-closing PascalCase components
   text = text.replace(/<[A-Z][A-Za-z]*[^>]*?\/\s*>/g, "");
 
-  // Remove opening PascalCase component tags, keep attributes text: <HoverDetail term="x" href="y">
-  // But NOT the closing tags — handle separately
-  // Strategy: replace opening <Component ...> and closing </Component> with nothing
+  // Remove opening/closing PascalCase component tags
   text = text.replace(/<\/[A-Z][A-Za-z]*\s*>/g, "");
   text = text.replace(/<[A-Z][A-Za-z]*\s[^>]*?>/g, "");
-
-  // Remove lone opening PascalCase tags without attributes (unlikely but safe)
   text = text.replace(/<[A-Z][A-Za-z]*>/g, "");
 
-  // Remove JSX expressions {value} but NOT markdown link references
+  // Remove JSX expressions
   text = text.replace(/\{[^}]*?\}/g, "");
 
   // Clean up excess whitespace
@@ -55,8 +52,8 @@ function cleanMdxForAI(raw: string): string {
   return text.trim();
 }
 
-// Discover all .mdx files in src/pages
-const articles: ArticleData[] = [];
+// ----- Load MDX articles from src/pages -----
+const allItems: ArticleData[] = [];
 const pagesDir = join(process.cwd(), "src", "pages");
 
 try {
@@ -65,7 +62,6 @@ try {
     const fullPath = join(pagesDir, file);
     const text = readFileSync(fullPath, "utf-8");
 
-    // Extract frontmatter
     const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!fmMatch) continue;
 
@@ -74,28 +70,45 @@ try {
     const descMatch = fm.match(/description:\s*["'](.+?)["']/);
     const hrefMatch = fm.match(/currentHref:\s*["'](.+?)["']/);
 
-    // Clean the body for AI
     const body = cleanMdxForAI(text);
 
-    articles.push({
+    allItems.push({
       title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
       description: descMatch?.[1] || "",
       href: hrefMatch?.[1] || "",
       content: body,
+      type: "article",
+      filename: file,
     });
   }
-} catch (e) {
-  // If readdir fails, build without articles
-}
-
-// Read writing guide
-let guideRaw = "";
-try {
-  const guidePath = join(process.cwd(), "NOTE_WRITING_GUIDE.md");
-  guideRaw = readFileSync(guidePath, "utf-8");
 } catch {}
 
-// API key from env (PUBLIC_ prefix makes it available client-side)
+// ----- Load project root docs -----
+const projectDocs: { filename: string; title: string }[] = [
+  { filename: "README.md", title: "README" },
+  { filename: "PROJECT_SPEC.md", title: "项目规范 (PROJECT_SPEC)" },
+  { filename: "NOTE_WRITING_GUIDE.md", title: "笔记编写原则" },
+];
+
+const referenceDocs: { title: string; content: string }[] = [];
+
+for (const doc of projectDocs) {
+  try {
+    const path = join(process.cwd(), doc.filename);
+    const text = readFileSync(path, "utf-8");
+    referenceDocs.push({ title: doc.title, content: text });
+    // Also add to management list
+    allItems.push({
+      title: doc.title,
+      description: `项目文档 — ${doc.filename}`,
+      href: "",
+      content: text,
+      type: "doc",
+      filename: doc.filename,
+    });
+  } catch {}
+}
+
 const apiKey = import.meta.env.PUBLIC_DEEPSEEK_API_KEY || "";
 ---
 
@@ -104,8 +117,8 @@ const apiKey = import.meta.env.PUBLIC_DEEPSEEK_API_KEY || "";
   description="AI-powered article generator & knowledge Q&A"
 >
   <Studio
-    articlesJson={JSON.stringify(articles)}
-    writingGuide={guideRaw}
+    itemsJson={JSON.stringify(allItems)}
+    referenceDocsJson={JSON.stringify(referenceDocs)}
     apiKey={apiKey}
     client:load
   />
