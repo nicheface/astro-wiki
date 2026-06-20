@@ -82,6 +82,47 @@ export default function Studio({ articlesJson, apiKey }: StudioProps) {
   }, [unlocked]);
 
   // ============================================================
+  //  Pagefind — lazy-load for pre-filtering
+  // ============================================================
+
+  const pagefindRef = useRef<any>(null);
+
+  const getPagefind = useCallback(async () => {
+    if (pagefindRef.current) return pagefindRef.current;
+    try {
+      const pf = await import(/* @vite-ignore */ "/astro-wiki/pagefind/pagefind.js");
+      pagefindRef.current = pf;
+      return pf;
+    } catch {
+      return null;
+    }
+  }, []);
+
+  /** Search Pagefind, return matched articles (by URL) */
+  const searchArticles = useCallback(async (query: string): Promise<ArticleInfo[]> => {
+    const pf = await getPagefind();
+    if (!pf) return articles; // fallback: all articles
+
+    const search = await pf.search(query);
+    if (!search?.results?.length) return articles;
+
+    const topUrls: string[] = [];
+    for (const r of search.results.slice(0, 5)) {
+      const d = await r.data();
+      // Normalize: strip trailing slash
+      topUrls.push(d.url.replace(/\/$/, ""));
+    }
+
+    // Match Pagefind URLs to article hrefs
+    const matched = articles.filter((a) => {
+      const articleUrl = a.href.replace(/\/$/, "");
+      return topUrls.some((u) => u === articleUrl || u.endsWith(articleUrl) || articleUrl.endsWith(u));
+    });
+
+    return matched.length > 0 ? matched : articles;
+  }, [articles, getPagefind]);
+
+  // ============================================================
   //  Q&A
   // ============================================================
 
@@ -95,11 +136,15 @@ export default function Studio({ articlesJson, apiKey }: StudioProps) {
     const controller = new AbortController();
     abortRef.current = controller;
 
-    const articleContext = articles
+    // Pre-filter: use Pagefind to find relevant articles
+    const relevant = await searchArticles(question.trim());
+    console.log(`[Studio] Pagefind matched ${relevant.length}/${articles.length} articles`);
+
+    const articleContext = relevant
       .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${a.content}`)
       .join("\n\n---\n\n");
 
-    const systemPrompt = `你是 Digital Garden 知识库的问答助手。以下是知识库中所有文章的全文内容。请根据这些内容回答用户的问题。
+    const systemPrompt = `你是 Digital Garden 知识库的问答助手。以下是知识库中${relevant.length < articles.length ? "与问题最相关的" : "所有"}文章的全文内容。请根据这些内容回答用户的问题。
 
 如果答案在文章中有明确依据，请引用文章标题。如果找不到相关信息，请诚实说明。
 
