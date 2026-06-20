@@ -7,8 +7,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { marked } from "marked";
 
-// SHA-256 of "[redacted]"
-const PASSWORD_HASH = "cfee3ee51a8a62f12a97606d6d204a9482c9886cd5cc5306919fc3ba1f47e9d3";
+// Password hash from env (not committed — never visible in repo)
+const PASSWORD_HASH = import.meta.env.PUBLIC_STUDIO_PASSWORD_HASH || "";
 
 interface ArticleInfo {
   title: string;

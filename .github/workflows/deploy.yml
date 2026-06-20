@@ -36,6 +36,7 @@ jobs:
         run: npm run build
         env:
           PUBLIC_DEEPSEEK_API_KEY: ${{ secrets.PUBLIC_DEEPSEEK_API_KEY }}
+          PUBLIC_STUDIO_PASSWORD_HASH: ${{ secrets.PUBLIC_STUDIO_PASSWORD_HASH }}
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
