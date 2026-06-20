@@ -131,12 +131,4 @@ astro-wiki/
 
 `astro.config.mjs` 中修改 `site` 和 `base` 适配自己的域名。
 
-### Studio AI 问答
-
-1. 在 GitHub Secrets 设 `PUBLIC_DEEPSEEK_API_KEY`
-2. 访问 `/studio`，输入密码 `[redacted]`
-3. 提问 → 本地 bigram 匹配文章 → DeepSeek 回答
-
----
-
 MIT © 2026
