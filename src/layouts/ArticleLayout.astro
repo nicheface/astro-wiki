@@ -8,7 +8,7 @@ import ArticleTimeline from "../components/ArticleTimeline.astro";
 import TableOfContents from "../components/TableOfContentsWrapper.astro";
 import SearchBox from "../components/SearchBoxWrapper.astro";
 import DarkToggle from "../components/DarkToggleWrapper.astro";
-import AiChat from "../components/AiChatWrapper.astro";
+
 
 export interface Props {
   title: string;
@@ -106,7 +106,5 @@ const { title = "Digital Garden", description = "", currentHref } = Astro.props;
       </div>
     </footer>
 
-    <!-- ===== AI Thinking Companion ===== -->
-    <AiChat pageTitle={title} pageDescription={description} />
   </body>
 </html>
