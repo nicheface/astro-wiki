@@ -28,7 +28,7 @@ interface StudioProps {
 
 export default function Studio({ articlesJson, writingGuide, apiKey }: StudioProps) {
   const articles: ArticleInfo[] = JSON.parse(articlesJson);
-  const [tab, setTab] = useState<"generate" | "qa">("qa");
+  const [tab, setTab] = useState<"generate" | "qa" | "manage">("qa");
 
   // ----- Article Generator state -----
   const [genPrompt, setGenPrompt] = useState("");
@@ -43,8 +43,16 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   const [qaLoading, setQaLoading] = useState(false);
   const [qaError, setQaError] = useState("");
 
+  // ----- Manage Notes state -----
+  const [manageIdx, setManageIdx] = useState(-1);
+  const [manageInstruction, setManageInstruction] = useState("");
+  const [manageOutput, setManageOutput] = useState("");
+  const [manageLoading, setManageLoading] = useState(false);
+  const [manageError, setManageError] = useState("");
+
   const genAbortRef = useRef<AbortController | null>(null);
   const qaAbortRef = useRef<AbortController | null>(null);
+  const manageAbortRef = useRef<AbortController | null>(null);
 
   // Debug: log articles on mount
   useEffect(() => {
@@ -231,6 +239,91 @@ ${articleContext}`;
   };
 
   // ============================================================
+  //  Manage Notes — AI Rewrite
+  // ============================================================
+
+  const selectedArticle = articles[manageIdx] || null;
+
+  const rewriteArticle = async () => {
+    if (!selectedArticle || !manageInstruction.trim() || manageLoading) return;
+    setManageLoading(true);
+    setManageOutput("");
+    setManageError("");
+
+    const controller = new AbortController();
+    manageAbortRef.current = controller;
+
+    const systemPrompt = `你是 Digital Garden 的编辑。用户想修改知识库中的一篇文章。请根据用户的修改指令，输出修改后的完整 MDX 文件。
+
+## 原始文章
+标题: ${selectedArticle.title}
+${selectedArticle.content}
+
+## 规则
+1. 输出修改后的完整 MDX，包含 frontmatter
+2. 保持 frontmatter 中的 layout、currentHref 不变
+3. 如果用户要求修改标题/描述/标签，相应更新 frontmatter
+4. 如果用户只是局部修改，保留未提及的部分不变
+5. 不要包含 import 语句`;
+
+    try {
+      const resp = await fetch("https://api.deepseek.com/v1/chat/completions", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model: "deepseek-v4-pro",
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: manageInstruction },
+          ],
+          stream: true,
+          max_tokens: 8192,
+        }),
+        signal: controller.signal,
+      });
+
+      if (!resp.ok) {
+        const err = await resp.text();
+        throw new Error(`API 错误 (${resp.status}): ${err.slice(0, 200)}`);
+      }
+
+      const reader = resp.body?.getReader();
+      if (!reader) throw new Error("无法读取响应流");
+
+      const decoder = new TextDecoder();
+      let full = "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value, { stream: true });
+        for (const line of chunk.split("\n")) {
+          if (!line.startsWith("data: ")) continue;
+          const data = line.slice(6).trim();
+          if (data === "[DONE]") break;
+          try { full += JSON.parse(data).choices?.[0]?.delta?.content || ""; } catch {}
+          setManageOutput(full);
+        }
+      }
+    } catch (err: unknown) {
+      if (err instanceof DOMException && err.name === "AbortError") return;
+      setManageError(err instanceof Error ? err.message : "未知错误");
+    } finally {
+      setManageLoading(false);
+      manageAbortRef.current = null;
+    }
+  };
+
+  const copyManageOutput = () => {
+    navigator.clipboard.writeText(manageOutput).then(() => {
+      const btn = document.getElementById("manage-copy-btn");
+      if (btn) { btn.textContent = "已复制 ✓"; setTimeout(() => { btn.textContent = "复制 MDX"; }, 2000); }
+    });
+  };
+
+  // ============================================================
   //  Render
   // ============================================================
 
@@ -242,7 +335,7 @@ ${articleContext}`;
           Studio
         </h1>
         <p className="text-sm text-zinc-500 dark:text-slate-400 mt-1">
-          AI 文章生成 & 知识库问答
+          AI 问答 · 文章生成 · 笔记管理
         </p>
       </div>
 
@@ -267,6 +360,16 @@ ${articleContext}`;
           }`}
         >
           ✨ 生成文章
+        </button>
+        <button
+          onClick={() => { setTab("manage"); setManageIdx(-1); setManageOutput(""); setManageInstruction(""); setManageError(""); }}
+          className={`px-4 py-1.5 rounded-lg text-sm font-medium transition-all ${
+            tab === "manage"
+              ? "bg-white dark:bg-slate-700 text-zinc-900 dark:text-slate-100 shadow-sm"
+              : "text-zinc-500 dark:text-slate-400 hover:text-zinc-700 dark:hover:text-slate-300"
+          }`}
+        >
+          📝 管理笔记
         </button>
       </div>
 
@@ -429,6 +532,111 @@ ${articleContext}`;
                 {genOutput}
               </pre>
             </div>
+          )}
+        </div>
+      )}
+
+      {/* ============================================================ */}
+      {/*  Manage Notes Tab                                           */}
+      {/* ============================================================ */}
+      {tab === "manage" && (
+        <div className="space-y-6">
+          {/* Select article */}
+          <div>
+            <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300 mb-2">
+              选择笔记
+            </label>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {articles.map((a, i) => (
+                <button
+                  key={i}
+                  onClick={() => { setManageIdx(i); setManageOutput(""); setManageInstruction(""); setManageError(""); }}
+                  className={`text-left px-4 py-3 rounded-xl text-sm transition-all border ${
+                    manageIdx === i
+                      ? "bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-700 text-blue-800 dark:text-blue-200"
+                      : "bg-white dark:bg-slate-800 border-zinc-200 dark:border-slate-700 text-zinc-700 dark:text-slate-300 hover:border-zinc-300 dark:hover:border-slate-600"
+                  }`}
+                >
+                  <div className="font-semibold">{a.title}</div>
+                  <div className="text-[11px] mt-0.5 opacity-70">{a.description}</div>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {selectedArticle && (
+            <>
+              {/* Current content preview */}
+              <details className="text-xs">
+                <summary className="cursor-pointer text-zinc-500 dark:text-slate-400 hover:text-zinc-700 dark:hover:text-slate-200">
+                  查看原文 ({selectedArticle.content.length} 字)
+                </summary>
+                <pre className="mt-2 p-4 rounded-xl bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-xs text-zinc-600 dark:text-slate-400 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed max-h-80 overflow-y-auto">
+                  {selectedArticle.content.slice(0, 3000)}
+                  {selectedArticle.content.length > 3000 && "\n\n... (内容已截断)"}
+                </pre>
+              </details>
+
+              {/* Rewrite instruction */}
+              <div className="space-y-3">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-slate-300">
+                  AI 重构指令
+                </label>
+                <textarea
+                  value={manageInstruction}
+                  onChange={(e) => setManageInstruction(e.target.value)}
+                  placeholder="例如：把开头改得更文艺，加入一个对比表格，删除第二段"
+                  rows={3}
+                  disabled={manageLoading}
+                  className="w-full px-4 py-3 rounded-xl text-sm bg-white dark:bg-slate-800 border border-zinc-200 dark:border-slate-700 text-zinc-800 dark:text-slate-200 placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 resize-none"
+                />
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={rewriteArticle}
+                    disabled={manageLoading || !manageInstruction.trim()}
+                    className="px-5 py-2 rounded-xl text-sm font-medium bg-purple-600 text-white hover:bg-purple-700 disabled:opacity-40 transition-all"
+                  >
+                    {manageLoading ? "重构中..." : "🔮 AI 重构"}
+                  </button>
+                  {manageLoading && (
+                    <button
+                      onClick={() => manageAbortRef.current?.abort()}
+                      className="text-xs text-zinc-400 hover:text-zinc-600 dark:text-slate-500 dark:hover:text-slate-300"
+                    >
+                      停止
+                    </button>
+                  )}
+                </div>
+                <p className="text-[10px] text-zinc-400 dark:text-slate-500">
+                  AI 会输出修改后的完整 MDX，包含 frontmatter。手动操作（重命名/删除/隐藏）请直接编辑仓库文件。
+                </p>
+              </div>
+
+              {manageError && (
+                <div className="p-3 rounded-xl bg-red-50 dark:bg-red-900/20 text-sm text-red-600 dark:text-red-400">
+                  {manageError}
+                </div>
+              )}
+
+              {/* Rewrite output */}
+              {manageOutput && (
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-zinc-500 dark:text-slate-400">重构结果</h3>
+                    <button
+                      id="manage-copy-btn"
+                      onClick={copyManageOutput}
+                      className="px-3 py-1 rounded-lg text-xs font-medium bg-zinc-200 dark:bg-slate-700 text-zinc-600 dark:text-slate-300 hover:bg-zinc-300 dark:hover:bg-slate-600 transition-all"
+                    >
+                      复制 MDX
+                    </button>
+                  </div>
+                  <pre className="p-5 rounded-2xl bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800 text-xs text-zinc-800 dark:text-slate-200 overflow-x-auto whitespace-pre-wrap font-mono leading-relaxed max-h-[600px] overflow-y-auto">
+                    {manageOutput}
+                  </pre>
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
