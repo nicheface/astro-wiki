@@ -33,7 +33,7 @@ interface AiConfig {
 const DEFAULT_CONFIG: AiConfig = {
   apiKey: "",
   endpoint: "https://api.openai.com/v1/chat/completions",
-  model: "gpt-4o-mini",
+  model: "gpt-4.1-mini",
 };
 
 // ----- Storage keys -----
@@ -729,17 +729,18 @@ export default function AiChat({ pageTitle = "", pageDescription = "" }: AiChatP
                 {/* Provider presets */}
                 <div className="flex flex-wrap gap-1 mb-1.5">
                   {([
-                    { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4o-mini" },
-                    { label: "DeepSeek", endpoint: "https://api.deepseek.com/v1/chat/completions", model: "deepseek-chat" },
-                    { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4o-mini" },
-                    { label: "Anthropic", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-3-5-sonnet-20241022" },
+                    { label: "OpenAI", endpoint: "https://api.openai.com/v1/chat/completions", model: "gpt-4.1-mini" },
+                    { label: "DeepSeek", endpoint: "https://api.deepseek.com/v1/chat/completions", model: "deepseek-v4-flash" },
+                    { label: "DeepSeek Pro", endpoint: "https://api.deepseek.com/v1/chat/completions", model: "deepseek-v4-pro" },
+                    { label: "Anthropic", endpoint: "https://api.anthropic.com/v1/messages", model: "claude-sonnet-4-20250514" },
+                    { label: "OpenRouter", endpoint: "https://openrouter.ai/api/v1/chat/completions", model: "openai/gpt-4.1-mini" },
                   ] as const).map((p) => (
                     <button
                       key={p.label}
                       type="button"
                       onClick={() => setConfig((c) => ({ ...c, endpoint: p.endpoint, model: p.model }))}
                       className={`px-2 py-0.5 rounded-md text-[10px] font-medium transition-all ${
-                        config.endpoint === p.endpoint
+                        config.endpoint === p.endpoint && config.model === p.model
                           ? "bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300"
                           : "bg-zinc-100 dark:bg-slate-800 text-zinc-500 dark:text-slate-400 hover:bg-zinc-200 dark:hover:bg-slate-700"
                       }`}
