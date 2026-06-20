@@ -8,7 +8,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { marked } from "marked";
 
 // SHA-256 of "[redacted]"
-const PASSWORD_HASH = "c8e24b7a9b9e8c9f1e3a5c7d9b0a2f4e6d8c0b2a4f6e8d0c2b4a6f8e0d2c4";
+const PASSWORD_HASH = "cfee3ee51a8a62f12a97606d6d204a9482c9886cd5cc5306919fc3ba1f47e9d3";
 
 interface ArticleInfo {
   title: string;
