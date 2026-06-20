@@ -1,7 +1,5 @@
 ---
 // ===== Studio.astro — AI Studio (personal tool) =====
-// Build-time: reads all MDX articles + project docs from disk.
-// Client-side: article generator + knowledge Q&A + note management.
 import Layout from "../layouts/Layout.astro";
 import Studio from "../components/Studio";
 import { readFileSync, readdirSync } from "node:fs";
@@ -16,52 +14,29 @@ interface ArticleData {
   filename: string;
 }
 
-/**
- * Clean MDX content for AI consumption:
- * - Strip PascalCase JSX component tags (keep inner text for containers)
- * - Remove JSX comments and imports
- * - Preserve markdown and HTML tags (lowercase)
- */
 function cleanMdxForAI(raw: string): string {
   let text = raw;
-
-  // Remove frontmatter
   text = text.replace(/^---[\s\S]*?---\n?/, "");
-
-  // Remove import statements
   text = text.replace(/^import\s+.*$/gm, "");
-
-  // Remove JSX comments {/* ... */}
   text = text.replace(/\{\/\*\s*[\s\S]*?\*\/\}/g, "");
-
-  // Remove self-closing PascalCase components
   text = text.replace(/<[A-Z][A-Za-z]*[^>]*?\/\s*>/g, "");
-
-  // Remove opening/closing PascalCase component tags
   text = text.replace(/<\/[A-Z][A-Za-z]*\s*>/g, "");
   text = text.replace(/<[A-Z][A-Za-z]*\s[^>]*?>/g, "");
   text = text.replace(/<[A-Z][A-Za-z]*>/g, "");
-
-  // Remove JSX expressions
   text = text.replace(/\{[^}]*?\}/g, "");
-
-  // Clean up excess whitespace
   text = text.replace(/\n{3,}/g, "\n\n");
   text = text.replace(/^\s*\n/gm, "");
-
   return text.trim();
 }
 
-// ----- Load MDX articles from src/pages -----
+// ----- Load MDX articles -----
 const allItems: ArticleData[] = [];
 const pagesDir = join(process.cwd(), "src", "pages");
 
 try {
   const files = readdirSync(pagesDir).filter((f) => f.endsWith(".mdx"));
   for (const file of files) {
-    const fullPath = join(pagesDir, file);
-    const text = readFileSync(fullPath, "utf-8");
-
+    const text = readFileSync(join(pagesDir, file), "utf-8");
     const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!fmMatch) continue;
 
@@ -70,41 +45,30 @@ try {
     const descMatch = fm.match(/description:\s*["'](.+?)["']/);
     const hrefMatch = fm.match(/currentHref:\s*["'](.+?)["']/);
 
-    const body = cleanMdxForAI(text);
-
     allItems.push({
       title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
       description: descMatch?.[1] || "",
       href: hrefMatch?.[1] || "",
-      content: body,
+      content: cleanMdxForAI(text),
       type: "article",
       filename: file,
     });
   }
 } catch {}
 
-// ----- Load project root docs -----
-const projectDocs: { filename: string; title: string }[] = [
+// ----- Load project reference docs (for article generator context) -----
+const projectDocs = [
   { filename: "README.md", title: "README" },
   { filename: "PROJECT_SPEC.md", title: "项目规范 (PROJECT_SPEC)" },
   { filename: "NOTE_WRITING_GUIDE.md", title: "笔记编写原则" },
 ];
 
 const referenceDocs: { title: string; content: string }[] = [];
-
 for (const doc of projectDocs) {
   try {
-    const path = join(process.cwd(), doc.filename);
-    const text = readFileSync(path, "utf-8");
-    referenceDocs.push({ title: doc.title, content: text });
-    // Also add to management list
-    allItems.push({
+    referenceDocs.push({
       title: doc.title,
-      description: `项目文档 — ${doc.filename}`,
-      href: "",
-      content: text,
-      type: "doc",
-      filename: doc.filename,
+      content: readFileSync(join(process.cwd(), doc.filename), "utf-8"),
     });
   } catch {}
 }
@@ -112,10 +76,7 @@ for (const doc of projectDocs) {
 const apiKey = import.meta.env.PUBLIC_DEEPSEEK_API_KEY || "";
 ---
 
-<Layout
-  title="Studio"
-  description="AI-powered article generator & knowledge Q&A"
->
+<Layout title="Studio" description="AI-powered article generator & knowledge Q&A">
   <Studio
     itemsJson={JSON.stringify(allItems)}
     referenceDocsJson={JSON.stringify(referenceDocs)}
