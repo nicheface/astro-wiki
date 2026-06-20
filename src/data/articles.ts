@@ -61,9 +61,9 @@ export const articles: ArticleMeta[] = [
   },
   {
     href: "/astro-wiki/01-future-of-knowledge",
-    title: "知识的未来：从超链接到超级组件",
+    title: "知识库的消隐：当界面没入知觉",
     description:
-      "探索下一代知识介质的可能性——当 Markdown 遇见组件，笔记不再只是文字，而是一个可交互的认知拓扑。",
+      "知识管理的终结不在更强大的组件，而在容器本身的消失——AI 充当外置皮层，认知开始呼吸。",
     date: "2026-06-20",
     tags: ["thinking", "knowledge", "digital-garden", "frontend", "astro", "react", "mdx", "component"],
   },
