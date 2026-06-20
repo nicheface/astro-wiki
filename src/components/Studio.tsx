@@ -182,7 +182,7 @@ ${articleList}
 
     // Build full article context
     const articleContext = articles
-      .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${stripContent(a.content)}`)
+      .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${a.content}`)
       .join("\n\n---\n\n");
 
     const systemPrompt = `你是 Digital Garden 知识库的问答助手。以下是知识库中所有文章的全文内容。请根据这些内容回答用户的问题。
@@ -456,12 +456,4 @@ ${articleContext}`;
       )}
     </div>
   );
-}
-
-/** Strip import statements from MDX content for cleaner AI context */
-function stripContent(raw: string): string {
-  return raw
-    .replace(/^import\s+.*$/gm, "")
-    .replace(/^\s*\n/gm, "")
-    .trim();
 }

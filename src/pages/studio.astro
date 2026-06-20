@@ -1,6 +1,7 @@
 ---
 // ===== Studio.astro — AI Studio (personal tool) =====
 // Build-time: reads all MDX articles + writing guide from disk.
+// Cleans JSX noise from article content before passing to AI.
 // Client-side: article generator + knowledge Q&A via DeepSeek.
 import Layout from "../layouts/Layout.astro";
 import Studio from "../components/Studio";
@@ -14,6 +15,46 @@ interface ArticleData {
   title: string;
   description: string;
   content: string;
+}
+
+/**
+ * Clean MDX content for AI consumption:
+ * - Strip PascalCase JSX component tags (keep inner text for containers)
+ * - Remove JSX comments and imports
+ * - Preserve markdown and HTML tags (lowercase)
+ */
+function cleanMdxForAI(raw: string): string {
+  let text = raw;
+
+  // Remove frontmatter
+  text = text.replace(/^---[\s\S]*?---\n?/, "");
+
+  // Remove import statements
+  text = text.replace(/^import\s+.*$/gm, "");
+
+  // Remove JSX comments {/* ... */}
+  text = text.replace(/\{\/\*\s*[\s\S]*?\*\/\}/g, "");
+
+  // Remove self-closing PascalCase components: <DataChart ... />, <ArticleTag ... />
+  text = text.replace(/<[A-Z][A-Za-z]*[^>]*?\/\s*>/g, "");
+
+  // Remove opening PascalCase component tags, keep attributes text: <HoverDetail term="x" href="y">
+  // But NOT the closing tags — handle separately
+  // Strategy: replace opening <Component ...> and closing </Component> with nothing
+  text = text.replace(/<\/[A-Z][A-Za-z]*\s*>/g, "");
+  text = text.replace(/<[A-Z][A-Za-z]*\s[^>]*?>/g, "");
+
+  // Remove lone opening PascalCase tags without attributes (unlikely but safe)
+  text = text.replace(/<[A-Z][A-Za-z]*>/g, "");
+
+  // Remove JSX expressions {value} but NOT markdown link references
+  text = text.replace(/\{[^}]*?\}/g, "");
+
+  // Clean up excess whitespace
+  text = text.replace(/\n{3,}/g, "\n\n");
+  text = text.replace(/^\s*\n/gm, "");
+
+  return text.trim();
 }
 
 // Discover all .mdx files in src/pages
@@ -33,7 +74,9 @@ try {
     const fm = fmMatch[1];
     const titleMatch = fm.match(/title:\s*["'](.+?)["']/);
     const descMatch = fm.match(/description:\s*["'](.+?)["']/);
-    const body = text.slice(fmMatch[0].length).trim();
+
+    // Clean the body for AI
+    const body = cleanMdxForAI(text);
 
     articles.push({
       title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
