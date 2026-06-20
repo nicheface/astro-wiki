@@ -1,5 +1,5 @@
 ---
-// ===== Studio.astro — AI Studio (personal tool) =====
+// ===== Studio.astro — Password-protected knowledge Q&A =====
 import Layout from "../layouts/Layout.astro";
 import Studio from "../components/Studio";
 import { readFileSync, readdirSync } from "node:fs";
@@ -10,8 +10,6 @@ interface ArticleData {
   description: string;
   href: string;
   content: string;
-  type: "article" | "doc";
-  filename: string;
 }
 
 function cleanMdxForAI(raw: string): string {
@@ -29,8 +27,7 @@ function cleanMdxForAI(raw: string): string {
   return text.trim();
 }
 
-// ----- Load MDX articles -----
-const allItems: ArticleData[] = [];
+const articles: ArticleData[] = [];
 const pagesDir = join(process.cwd(), "src", "pages");
 
 try {
@@ -39,48 +36,19 @@ try {
     const text = readFileSync(join(pagesDir, file), "utf-8");
     const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
     if (!fmMatch) continue;
-
     const fm = fmMatch[1];
-    const titleMatch = fm.match(/title:\s*["'](.+?)["']/);
-    const descMatch = fm.match(/description:\s*["'](.+?)["']/);
-    const hrefMatch = fm.match(/currentHref:\s*["'](.+?)["']/);
-
-    allItems.push({
-      title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
-      description: descMatch?.[1] || "",
-      href: hrefMatch?.[1] || "",
+    articles.push({
+      title: (fm.match(/title:\s*["'](.+?)["']/) || [])[1] || file.replace(/\.mdx$/, ""),
+      description: (fm.match(/description:\s*["'](.+?)["']/) || [])[1] || "",
+      href: (fm.match(/currentHref:\s*["'](.+?)["']/) || [])[1] || "",
       content: cleanMdxForAI(text),
-      type: "article",
-      filename: file,
     });
   }
 } catch {}
 
-// ----- Load project reference docs (for article generator context) -----
-const projectDocs = [
-  { filename: "README.md", title: "README" },
-  { filename: "PROJECT_SPEC.md", title: "项目规范 (PROJECT_SPEC)" },
-  { filename: "NOTE_WRITING_GUIDE.md", title: "笔记编写原则" },
-];
-
-const referenceDocs: { title: string; content: string }[] = [];
-for (const doc of projectDocs) {
-  try {
-    referenceDocs.push({
-      title: doc.title,
-      content: readFileSync(join(process.cwd(), doc.filename), "utf-8"),
-    });
-  } catch {}
-}
-
 const apiKey = import.meta.env.PUBLIC_DEEPSEEK_API_KEY || "";
 ---
 
-<Layout title="Studio" description="AI-powered article generator & knowledge Q&A">
-  <Studio
-    itemsJson={JSON.stringify(allItems)}
-    referenceDocsJson={JSON.stringify(referenceDocs)}
-    apiKey={apiKey}
-    client:load
-  />
+<Layout title="Studio" description="Password-protected knowledge Q&A">
+  <Studio articlesJson={JSON.stringify(articles)} apiKey={apiKey} client:load />
 </Layout>
