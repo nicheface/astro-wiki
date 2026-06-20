@@ -6,10 +6,7 @@
 import Layout from "../layouts/Layout.astro";
 import Studio from "../components/Studio";
 import { readFileSync, readdirSync } from "node:fs";
-import { resolve, dirname, join } from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __dirname = dirname(fileURLToPath(import.meta.url));
+import { join } from "node:path";
 
 interface ArticleData {
   title: string;
@@ -59,7 +56,7 @@ function cleanMdxForAI(raw: string): string {
 
 // Discover all .mdx files in src/pages
 const articles: ArticleData[] = [];
-const pagesDir = __dirname;
+const pagesDir = join(process.cwd(), "src", "pages");
 
 try {
   const files = readdirSync(pagesDir).filter((f) => f.endsWith(".mdx"));
@@ -91,7 +88,7 @@ try {
 // Read writing guide
 let guideRaw = "";
 try {
-  const guidePath = resolve(__dirname, "../../NOTE_WRITING_GUIDE.md");
+  const guidePath = join(process.cwd(), "NOTE_WRITING_GUIDE.md");
   guideRaw = readFileSync(guidePath, "utf-8");
 } catch {}
 

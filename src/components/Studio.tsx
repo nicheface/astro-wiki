@@ -70,6 +70,12 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
   const genAbortRef = useRef<AbortController | null>(null);
   const qaAbortRef = useRef<AbortController | null>(null);
 
+  // Debug: log articles on mount
+  useEffect(() => {
+    console.log("[Studio] Loaded articles:", articles.length);
+    articles.forEach((a, i) => console.log(`  ${i + 1}. ${a.title} (${a.content.length} chars)`));
+  }, [articles]);
+
   // ============================================================
   //  Article Generator
   // ============================================================
@@ -360,13 +366,16 @@ ${articleContext}`;
           )}
 
           {/* Article index summary */}
-          <details className="text-xs text-zinc-400 dark:text-slate-500">
+          <details className="text-xs text-zinc-400 dark:text-slate-500" open>
             <summary className="cursor-pointer hover:text-zinc-600 dark:hover:text-slate-300">
-              已索引 {articles.length} 篇文章
+              📚 已索引 {articles.length} 篇文章
             </summary>
             <ul className="mt-2 space-y-1">
               {articles.map((a, i) => (
-                <li key={i}>· {a.title}</li>
+                <li key={i}>
+                  · <strong>{a.title}</strong>
+                  <span className="ml-1 text-zinc-300 dark:text-slate-600">({a.content.length} 字)</span>
+                </li>
               ))}
             </ul>
           </details>
