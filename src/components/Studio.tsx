@@ -1,10 +1,12 @@
 /**
  * Studio.tsx — 个人 AI 工作室
  * Two tools: Article Generator + Content Q&A
+ * Uses marked.js for proper markdown rendering.
  */
 "use client";
 
 import { useState, useRef, useEffect } from "react";
+import { marked } from "marked";
 
 // ----- Types -----
 interface ArticleInfo {
@@ -18,31 +20,6 @@ interface StudioProps {
   articlesJson: string;
   writingGuide: string;
   apiKey: string;
-}
-
-// ----- Simple markdown renderer (for AI output preview) -----
-function renderMarkdown(text: string): string {
-  let html = text;
-  html = html.replace(/```(\w*)\n([\s\S]*?)```/g, (_m, _lang, code) =>
-    `<pre class="bg-zinc-100 dark:bg-slate-800 rounded-lg p-3 my-2 overflow-x-auto text-xs"><code>${escapeHtml(code.trim())}</code></pre>`,
-  );
-  html = html.replace(/`([^`]+)`/g, '<code class="bg-zinc-100 dark:bg-slate-800 px-1 py-0.5 rounded text-xs font-mono">$1</code>');
-  html = html.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
-  html = html.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" class="text-blue-600 dark:text-blue-400 underline">$1</a>');
-  html = html.replace(/^### (.+)$/gm, '<h4 class="text-sm font-semibold mt-3 mb-1">$1</h4>');
-  html = html.replace(/^## (.+)$/gm, '<h3 class="text-base font-semibold mt-4 mb-1">$1</h3>');
-  html = html.replace(/^# (.+)$/gm, '<h2 class="text-lg font-semibold mt-4 mb-2">$1</h2>');
-  html = html.replace(/^[-*] (.+)$/gm, '<li class="ml-4 list-disc">$1</li>');
-  html = html.replace(/\n\n/g, "</p><p class=\"mb-2\">");
-  html = html.replace(/\n/g, "<br/>");
-  html = `<p class="mb-2">${html}</p>`;
-  html = html.replace(/<p class="mb-2"><\/p>/g, "");
-  return html;
-}
-
-function escapeHtml(s: string): string {
-  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 // ============================================================
@@ -90,7 +67,6 @@ export default function Studio({ articlesJson, writingGuide, apiKey }: StudioPro
     const controller = new AbortController();
     genAbortRef.current = controller;
 
-    // Build article list for context
     const articleList = articles
       .map((a) => `- **${a.title}**: ${a.description}`)
       .join("\n");
@@ -187,7 +163,6 @@ ${articleList}
     const controller = new AbortController();
     qaAbortRef.current = controller;
 
-    // Build full article context
     const articleContext = articles
       .map((a, i) => `### 文章${i + 1}: ${a.title}\n${a.description}\n\n${a.content}`)
       .join("\n\n---\n\n");
@@ -195,6 +170,8 @@ ${articleList}
     const systemPrompt = `你是 Digital Garden 知识库的问答助手。以下是知识库中所有文章的全文内容。请根据这些内容回答用户的问题。
 
 如果答案在文章中有明确依据，请引用文章标题。如果找不到相关信息，请诚实说明。
+
+回答格式使用 Markdown，可以自由使用表格、列表、引用块等格式。
 
 ## 知识库内容
 ${articleContext}`;
@@ -348,8 +325,8 @@ ${articleContext}`;
             <div className="p-5 rounded-2xl bg-zinc-50 dark:bg-slate-900 border border-zinc-100 dark:border-slate-800">
               <h3 className="text-sm font-semibold text-zinc-500 dark:text-slate-400 mb-3">回答</h3>
               <div
-                className="prose prose-sm prose-zinc dark:prose-invert max-w-none"
-                dangerouslySetInnerHTML={{ __html: renderMarkdown(answer) }}
+                className="prose prose-sm prose-zinc dark:prose-invert max-w-none [&_table]:w-full [&_table]:border-collapse [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:text-xs [&_th]:font-semibold [&_th]:border-b [&_th]:border-zinc-200 dark:[&_th]:border-slate-700 [&_td]:px-3 [&_td]:py-2 [&_td]:text-xs [&_td]:border-b [&_td]:border-zinc-100 dark:[&_td]:border-slate-800 [&_blockquote]:border-l-2 [&_blockquote]:border-blue-400 [&_blockquote]:pl-4 [&_blockquote]:my-2 [&_blockquote]:text-sm [&_blockquote]:text-zinc-500 dark:[&_blockquote]:text-slate-400 [&_hr]:my-4 [&_hr]:border-zinc-200 dark:[&_hr]:border-slate-700"
+                dangerouslySetInnerHTML={{ __html: marked.parse(answer, { breaks: true }) as string }}
               />
               {sources.length > 0 && (
                 <div className="mt-4 pt-3 border-t border-zinc-200 dark:border-slate-800">
