@@ -1,0 +1,69 @@
+---
+// ===== Studio.astro — AI Studio (personal tool) =====
+// Build-time: reads all MDX articles + writing guide from disk.
+// Client-side: article generator + knowledge Q&A via DeepSeek.
+import Layout from "../layouts/Layout.astro";
+import Studio from "../components/Studio";
+import { readFileSync, readdirSync } from "node:fs";
+import { resolve, dirname, join } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
+
+interface ArticleData {
+  title: string;
+  description: string;
+  content: string;
+}
+
+// Discover all .mdx files in src/pages
+const articles: ArticleData[] = [];
+const pagesDir = __dirname;
+
+try {
+  const files = readdirSync(pagesDir).filter((f) => f.endsWith(".mdx"));
+  for (const file of files) {
+    const fullPath = join(pagesDir, file);
+    const text = readFileSync(fullPath, "utf-8");
+
+    // Extract frontmatter
+    const fmMatch = text.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+    if (!fmMatch) continue;
+
+    const fm = fmMatch[1];
+    const titleMatch = fm.match(/title:\s*["'](.+?)["']/);
+    const descMatch = fm.match(/description:\s*["'](.+?)["']/);
+    const body = text.slice(fmMatch[0].length).trim();
+
+    articles.push({
+      title: titleMatch?.[1] || file.replace(/\.mdx$/, ""),
+      description: descMatch?.[1] || "",
+      content: body,
+    });
+  }
+} catch (e) {
+  // If readdir fails, build without articles
+}
+
+// Read writing guide
+let guideRaw = "";
+try {
+  const guidePath = resolve(__dirname, "../../NOTE_WRITING_GUIDE.md");
+  guideRaw = readFileSync(guidePath, "utf-8");
+} catch {}
+
+// API key from env (PUBLIC_ prefix makes it available client-side)
+const apiKey = import.meta.env.PUBLIC_DEEPSEEK_API_KEY || "";
+---
+
+<Layout
+  title="Studio"
+  description="AI-powered article generator & knowledge Q&A"
+>
+  <Studio
+    articlesJson={JSON.stringify(articles)}
+    writingGuide={guideRaw}
+    apiKey={apiKey}
+    client:load
+  />
+</Layout>
