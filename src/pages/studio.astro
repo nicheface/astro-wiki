@@ -40,7 +40,7 @@ try {
     articles.push({
       title: (fm.match(/title:\s*["'](.+?)["']/) || [])[1] || file.replace(/\.mdx$/, ""),
       description: (fm.match(/description:\s*["'](.+?)["']/) || [])[1] || "",
-      href: (fm.match(/currentHref:\s*["'](.+?)["']/) || [])[1] || "",
+      href: (fm.match(/activePath:\s*["'](.+?)["']/) || [])[1] || "",
       content: cleanMdxForAI(text),
     });
   }

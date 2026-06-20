@@ -13,10 +13,10 @@ import DarkToggle from "../components/DarkToggleWrapper.astro";
 export interface Props {
   title: string;
   description?: string;
-  currentHref?: string;
+  activePath?: string;
 }
 
-const { title = "Noösphere", description = "", currentHref } = Astro.props;
+const { title = "Noösphere", description = "", activePath } = Astro.props;
 ---
 
 <!doctype html>
@@ -86,7 +86,7 @@ const { title = "Noösphere", description = "", currentHref } = Astro.props;
     <div class="max-w-[90rem] mx-auto px-6 sm:px-10">
       <div class="flex gap-10 py-12 sm:py-16">
         <!-- Left: Article Timeline -->
-        <ArticleTimeline currentHref={currentHref} />
+        <ArticleTimeline activePath={Astro.props.frontmatter?.activePath} />
 
         <!-- Center: Main Content -->
         <main class="flex-1 min-w-0 max-w-3xl">
