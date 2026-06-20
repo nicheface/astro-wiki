@@ -8,6 +8,7 @@ tags: [thinking, knowledge, digital-garden, frontend, astro, react, mdx, compone
 
 import DataChart from "../components/DataChartWrapper.astro";
 import SmartImageCard from "../components/SmartImageCard.astro";
+import ArticleHero from "../components/ArticleHero.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
 import LiveCodeBlock from "../components/LiveCodeBlockWrapper.astro";
 import ArticleTag from "../components/ArticleTagWrapper.astro";
@@ -23,13 +24,11 @@ import ArticleTag from "../components/ArticleTagWrapper.astro";
   </div>
 
   {/* Header image */}
-  <img
+  <ArticleHero
     src="https://images.unsplash.com/photo-1532619675605-1ede6c2ed2b0?w=1200&h=500&fit=crop"
     alt="抽象思维网络"
-    class="w-full h-48 sm:h-56 object-cover rounded-2xl mb-2 opacity-80 dark:opacity-60"
-    loading="lazy"
+    caption="万物静默如谜，唯有联结低语。"
   />
-  <p class="text-xs text-zinc-400 dark:text-slate-500 mb-6 italic tracking-wide">万物静默如谜，唯有联结低语。</p>
 
   <h1 class="text-4xl sm:text-5xl font-bold tracking-tight text-zinc-900 leading-tight">
     知识的默会转向

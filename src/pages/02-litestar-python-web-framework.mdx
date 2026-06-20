@@ -7,6 +7,7 @@ tags: [coding, python, litestar, asgi, api, framework, async, perf]
 ---
 
 import DataChart from "../components/DataChartWrapper.astro";
+import ArticleHero from "../components/ArticleHero.astro";
 import HoverDetail from "../components/HoverDetailWrapper.astro";
 import ArticleTag from "../components/ArticleTagWrapper.astro";
 
@@ -15,13 +16,11 @@ import ArticleTag from "../components/ArticleTagWrapper.astro";
 	<ArticleTag tagKey="coding" /> <ArticleTag tagKey="python" /> <ArticleTag tagKey="litestar" /> <ArticleTag tagKey="framework" /> <ArticleTag tagKey="asgi" /> <ArticleTag tagKey="async" /> <ArticleTag tagKey="perf" /> <ArticleTag tagKey="api" />
 </div>
 
-<img
+<ArticleHero
   src="https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=1200&h=500&fit=crop"
   alt="代码抽象"
-  class="w-full h-48 sm:h-56 object-cover rounded-2xl mb-2 opacity-80 dark:opacity-60"
-  loading="lazy"
+  caption="每一行代码都是对复杂性的降维打击。"
 />
-<p class="text-xs text-zinc-400 dark:text-slate-500 mb-10 italic tracking-wide">每一行代码都是对复杂性的降维打击。</p>
 
 {/* ===== 开篇 ===== */}
 <div class="not-prose mb-16">

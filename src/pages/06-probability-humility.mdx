@@ -9,6 +9,7 @@ tags: [thinking, probability, methodology, statistics, decision-making]
 import HoverDetail from "../components/HoverDetailWrapper.astro";
 import DataChart from "../components/DataChartWrapper.astro";
 import ProbabilityPlayground from "../components/ProbabilityPlaygroundWrapper.astro";
+import ArticleHero from "../components/ArticleHero.astro";
 import ArticleTag from "../components/ArticleTagWrapper.astro";
 
 {/* ===== 标签栏 ===== */}
@@ -16,13 +17,11 @@ import ArticleTag from "../components/ArticleTagWrapper.astro";
 	<ArticleTag tagKey="thinking" /> <ArticleTag tagKey="knowledge" /> <ArticleTag tagKey="methodology" />
 </div>
 
-<img
-  src="https://images.unsplash.com/photo-1509228468518-180b4f6fb1cb?w=1200&h=500&fit=crop"
-  alt="骰子与概率"
-  class="w-full h-48 sm:h-56 object-cover rounded-2xl mb-2 opacity-80 dark:opacity-60"
-  loading="lazy"
+<ArticleHero
+  src="https://images.unsplash.com/photo-1557682250-33bd709cbe85?w=1200&h=500&fit=crop"
+  alt="概率纹理"
+  caption="不确定性有形状。那个形状只有一个参数。"
 />
-<p class="text-xs text-zinc-400 dark:text-slate-500 mb-10 italic tracking-wide">不确定性有形状。那个形状只有一个参数。</p>
 
 {/* ===== 开篇 ===== */}
 <div class="not-prose mb-16">

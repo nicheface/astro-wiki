@@ -1,0 +1,21 @@
+---
+// ===== ArticleHero.astro — 文章头图 + 玄深一句话 =====
+// Every article should start with this component.
+export interface Props {
+  src: string;
+  alt: string;
+  caption: string;
+}
+
+const { src, alt, caption } = Astro.props;
+---
+
+<div class="not-prose">
+  <img
+    src={src}
+    alt={alt}
+    class="w-full h-48 sm:h-56 object-cover rounded-2xl mb-2 opacity-80 dark:opacity-60"
+    loading="lazy"
+  />
+  <p class="text-xs text-zinc-400 dark:text-slate-500 mb-10 italic tracking-wide">{caption}</p>
+</div>
